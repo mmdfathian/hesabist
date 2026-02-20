@@ -1,1 +1,30 @@
-{\n  "name": "Hesabist",\n  "short_name": "Hesabist",\n  "start_url": "/index.html",\n  "display": "standalone",\n  "background_color": "#FFFFFF",\n  "theme_color": "#000000",\n  "icons": [\n    {\n      "src": "icons/icon-192x192.png",\n      "sizes": "192x192",\n      "type": "image/png"\n    },\n    {\n      "src": "icons/icon-512x512.png",\n      "sizes": "512x512",\n      "type": "image/png"\n    }\n  ]\n}
+{
+  "name": "Hesabist | حسابیست",
+  "short_name": "حسابیست",
+  "description": "مجموعه ابزارهای هوشمند محاسباتی",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0984e3",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "fa-IR",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2344/2344132.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2344/2344132.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2344/2344132.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
