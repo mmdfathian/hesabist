@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>حسابیست | HESABIST</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-blue">
+
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="mohix-logo-premium">
+                <div class="logo-wrapper">
+                    <span class="logo-fa">حسابیست</span>
+                    <span class="logo-en">HESABIST</span>
+                </div>
+            </div>
+            <h1 class="splash-title">MOHIX COMPANY</h1>
+            <div class="loader-track"><div class="loader-fill"></div></div>
+        </div>
+    </div>
+
+    <div id="app-wrapper" style="display: none; opacity: 0; transition: opacity 0.5s;">
+        <header>
+            <div class="header-main">
+                <div class="mohix-badge" style="border-radius: 15px; transform: rotate(-5deg); background: linear-gradient(45deg, var(--primary), #0056b3);">H</div>
+                <div class="brand-info">
+                    <h1>حسابیست</h1>
+                    <span>HESABIST</span>
+                </div>
+            </div>
+            <div class="engine-label">MOHIX SMART ENGINE</div>
+            <div class="header-clock">
+                <span id="txt-clock">00:00:00</span>
+                <span id="txt-date">Loading...</span>
+            </div>
+        </header>
+
+        <main id="home-view">
+            <div class="search-box">
+                <input type="text" id="toolSearch" onkeyup="searchTools()" placeholder="جستجو میان ابزارها...">
+            </div>
+            <div id="tabs-container" class="tabs-list"></div>
+            <div id="tools-grid" class="tools-grid"></div>
+        </main>
+
+        <section id="tool-view" style="display:none;">
+            <div class="tool-nav">
+                <button class="back-btn" onclick="showHome()">← بازگشت</button>
+                <h2 id="tool-title">عنوان ابزار</h2>
+            </div>
+            <div class="calc-container">
+                <div class="inputs-group">
+                    <input type="number" id="inp1" inputmode="decimal">
+                    <input type="number" id="inp2" inputmode="decimal" style="display:none;">
+                    <input type="number" id="inp3" inputmode="decimal" style="display:none;">
+                </div>
+                <button id="btn-calc" class="calc-action-btn">محاسبه نهایی</button>
+                <div class="result-display">
+                    <span id="res-val"></span>
+                </div>
+            </div>
+        </section>
+
+        <nav class="bottom-bar">
+            <button onclick="showHome()">خانه</button>
+            <button onclick="toggleSettings()">تنظیمات</button>
+            <button id="lang-btn" onclick="changeLanguage()">English</button>
+        </nav>
+    </div>
+
+    <div id="settings-modal" onclick="toggleSettings()">
+        <div class="settings-content" onclick="event.stopPropagation()">
+            <h3>تنظیمات ظاهر</h3>
+            <div class="theme-dots">
+                <div class="dot blue" onclick="applyTheme('blue')"></div>
+                <div class="dot purple" onclick="applyTheme('purple')"></div>
+                <div class="dot orange" onclick="applyTheme('orange')"></div>
+                <div class="dot green" onclick="applyTheme('green')"></div>
+            </div>
+            <button class="dark-mode-btn" onclick="handleDarkMode()">تغییر حالت شب/روز</button>
+            <button class="close-modal-btn" onclick="toggleSettings()">تایید</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
