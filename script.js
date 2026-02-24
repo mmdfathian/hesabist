@@ -63,6 +63,7 @@ window.onload = () => {
     applyTheme(theme);
     updateUI();
     setInterval(tickClock, 1000);
+
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
         const wrapper = document.getElementById('app-wrapper');
@@ -72,8 +73,23 @@ window.onload = () => {
         setTimeout(() => {
             wrapper.style.opacity = '1';
             splash.style.display = 'none';
+            // چک کردن آدرس ورودی برای لینک مستقیم
+            const urlParams = new URLSearchParams(window.location.search);
+            const toolId = urlParams.get('tool');
+            if (toolId && dictionary[currentLang].tools[toolId]) {
+                openTool(toolId, false);
+            }
         }, 50);
     }, 2200);
+};
+
+// مدیریت دکمه Back گوشی و مرورگر
+window.onpopstate = (event) => {
+    if (event.state && event.state.id) {
+        openTool(event.state.id, false);
+    } else {
+        showHome(false);
+    }
 };
 
 function tickClock() {
@@ -112,9 +128,15 @@ function filterByCategory(cat, btn) {
     renderTools(cat === 'all' ? toolList : toolList.filter(t => t.cat === cat));
 }
 
-function openTool(id) {
+function openTool(id, pushState = true) {
     currentToolId = id;
     const toolData = dictionary[currentLang].tools[id];
+    
+    if(pushState) {
+        const newUrl = window.location.pathname + '?tool=' + id;
+        window.history.pushState({id: id}, '', newUrl);
+    }
+
     document.getElementById('home-view').style.display = 'none';
     document.getElementById('tool-view').style.display = 'block';
     document.getElementById('tool-title').innerText = toolData.title;
@@ -129,7 +151,10 @@ function openTool(id) {
     window.scrollTo(0,0);
 }
 
-function showHome() {
+function showHome(pushState = true) {
+    if(pushState) {
+        window.history.pushState(null, '', window.location.pathname);
+    }
     document.getElementById('tool-view').style.display = 'none';
     document.getElementById('home-view').style.display = 'block';
 }
@@ -186,7 +211,7 @@ function searchTools() {
     const s = document.getElementById('toolSearch').value.toLowerCase();
     renderTools(toolList.filter(t => dictionary[currentLang].tools[t.id].title.toLowerCase().includes(s)));
 }
-// ثبت سرویس ورکر در انتهای فایل script.js
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
