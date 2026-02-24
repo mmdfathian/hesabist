@@ -148,6 +148,7 @@ function openTool(id, pushState = true) {
     i3.style.display = toolData.p3 ? 'block' : 'none';
     if(toolData.p2) i2.placeholder = toolData.p2;
     if(toolData.p3) i3.placeholder = toolData.p3;
+    document.title = toolData.title + " آنلاین | حسابیست";
     window.scrollTo(0,0);
 }
 
