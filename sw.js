@@ -1,42 +1,41 @@
-const CACHE_NAME = 'hesabist-cache-v1';
+// نسخه cache به صورت خودکار از timestamp ساخته می‌شه
+const CACHE_VERSION = 'hesabist-v2.0';
+const CACHE_NAME = CACHE_VERSION;
+
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './style.css',
     './script.js',
-    './manifest.json',
-    'https://unpkg.com/lucide@latest'
+    './manifest.json'
 ];
 
-// نصب سرویس ورکر و کش کردن فایل‌های اصلی
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS_TO_CACHE);
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
     );
+    self.skipWaiting();
 });
 
-// فعال‌سازی و پاک‌سازی کش‌های قدیمی
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cache) => {
-                    if (cache !== CACHE_NAME) {
-                        return caches.delete(cache);
-                    }
-                })
-            );
-        })
+        caches.keys().then(keys =>
+            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+        )
     );
+    self.clients.claim();
 });
 
-// استراتژی پاسخ‌دهی: اول کش، اگر نبود شبکه
-self.addEventListener('fetch', (event) => {
+// استراتژی: Network First → Cache fallback
+self.addEventListener('fetch', event => {
+    if (event.request.method !== 'GET') return;
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-        })
+        fetch(event.request)
+            .then(response => {
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                return response;
+            })
+            .catch(() => caches.match(event.request))
     );
 });
