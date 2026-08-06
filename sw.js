@@ -1,5 +1,5 @@
 // نسخه cache به صورت خودکار از timestamp ساخته می‌شه
-const CACHE_VERSION = 'hesabist-v2.0';
+const CACHE_VERSION = 'hesabist-v2.1';
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS_TO_CACHE = [
@@ -7,7 +7,9 @@ const ASSETS_TO_CACHE = [
     './index.html',
     './style.css',
     './script.js',
-    './manifest.json'
+    './manifest.json',
+    './icon-192.svg',
+    './icon-512.svg'
 ];
 
 self.addEventListener('install', event => {

@@ -1,0 +1,29 @@
+{
+  "name": "hesabist",
+  "version": "2.0.0",
+  "description": "حسابیست | مجموعه ابزارهای محاسباتی هوشمند فارسی",
+  "main": "script.js",
+  "scripts": {
+    "test": "node tests/calculator.test.js",
+    "start": "python -m http.server 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmdfathian/hesabist.git"
+  },
+  "keywords": [
+    "calculator",
+    "persian",
+    "farsi",
+    "pwa",
+    "math",
+    "finance",
+    "health"
+  ],
+  "author": "MOHIX COMPANY",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mmdfathian/hesabist/issues"
+  },
+  "homepage": "https://hesabist-app.ir"
+}

@@ -79,9 +79,47 @@ function generatePassword(length) {
 
 // ─── فرمول استاندارد PMT برای وام ──────────────────────────────────────────
 function calcLoan(principal, annualRate, months) {
+    // Validation
+    if (principal <= 0 || annualRate < 0 || months <= 0) {
+        return { error: 'مقادیر نامعتبر' };
+    }
     if (annualRate === 0) return Math.round(principal / months);
     const r = annualRate / 100 / 12;
     return Math.round(principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1));
+}
+
+// ─── محاسبه BMI ─────────────────────────────────────────────────────────────
+function calcBMI(weight, height) {
+    if (weight <= 0 || height <= 0) {
+        return { error: 'مقادیر نامعتبر' };
+    }
+    const heightM = height / 100;
+    const bmi = weight / (heightM * heightM);
+    let category = '';
+    if (bmi < 18.5) category = 'کمبود وزن';
+    else if (bmi < 25) category = 'نرمال';
+    else if (bmi < 30) category = 'اضافه وزن';
+    else category = 'چاق';
+    return { bmi: Math.round(bmi * 10) / 10, category };
+}
+
+// ─── محاسبه تخفیف ──────────────────────────────────────────────────────────
+function calcDiscount(price, discountPercent) {
+    if (price <= 0 || discountPercent < 0 || discountPercent > 100) {
+        return { error: 'مقادیر نامعتبر' };
+    }
+    const discount = price * discountPercent / 100;
+    const finalPrice = price - discount;
+    return { discount: Math.round(discount), finalPrice: Math.round(finalPrice) };
+}
+
+// ─── محاسبه سن ──────────────────────────────────────────────────────────────
+function calcAge(birthYear) {
+    const currentYear = parseInt(new Date().toLocaleDateString('fa-IR-u-ca-persian', { year: 'numeric' }).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+    if (birthYear <= 0 || birthYear > currentYear) {
+        return { error: 'سال تولد نامعتبر' };
+    }
+    return { age: currentYear - birthYear };
 }
 
 // ─── بوت ───────────────────────────────────────────────────────────────────
