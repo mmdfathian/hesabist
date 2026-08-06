@@ -20,7 +20,10 @@ const dictionary = {
             temp:     { title: "دما (C به F)", p1: "درجه سانتی‌گراد", desc: "تبدیل آنلاین درجه سانتی‌گراد به فارنهایت." },
             ideals:   { title: "وزن ایده‌آل", p1: "قد (سانت، بیشتر از ۱۲۰)", desc: "محاسبه آنلاین وزن ایده‌آل بر اساس قد." },
             square:   { title: "توان دوم",    p1: "عدد",          desc: "محاسبه آنلاین توان دوم (مجذور) اعداد." },
-            profit:   { title: "سود بانکی",   p1: "سرمایه (تومان)", p2: "سود سالانه (%)", desc: "محاسبه آنلاین سود سپرده بانکی ماهانه و سالانه." }
+            profit:   { title: "سود بانکی",   p1: "سرمایه (تومان)", p2: "سود سالانه (%)", desc: "محاسبه آنلاین سود سپرده بانکی ماهانه و سالانه." },
+            dollar:   { title: "قیمت دلار",   p1: "مبلغ (تومان)",  p2: "نرخ دلار",     desc: "تبدیل تومان به دلار با نرخ روز." },
+            currency: { title: "نرخ ارز",      p1: "مبلغ",          p2: "از ارز",        p3: "به ارز", desc: "تبدیل ارزهای مختلف به یکدیگر." },
+            calorie:  { title: "کالری‌سوزی",   p1: "وزن (کیلو)",    p2: "زمان (دقیقه)",  p3: "نوع فعالیت", desc: "محاسبه کالری سوزانده شده در ورزش." }
         }
     },
     en: {
@@ -41,7 +44,10 @@ const dictionary = {
             temp:     { title: "Celsius to F",  p1: "Celsius" },
             ideals:   { title: "Ideal Weight",  p1: "Height (cm, >120)" },
             square:   { title: "Square (x²)",   p1: "Number" },
-            profit:   { title: "Bank Profit",   p1: "Deposit",    p2: "APY (%)" }
+            profit:   { title: "Bank Profit",   p1: "Deposit",    p2: "APY (%)" },
+            dollar:   { title: "Dollar Price",  p1: "Amount (Toman)", p2: "Dollar Rate", desc: "Convert Toman to Dollar with current rate." },
+            currency: { title: "Exchange Rate", p1: "Amount",     p2: "From",         p3: "To", desc: "Convert between different currencies." },
+            calorie:  { title: "Calorie Burn",  p1: "Weight (kg)", p2: "Duration (min)", p3: "Activity Type", desc: "Calculate calories burned during exercise." }
         }
     }
 };
@@ -60,7 +66,10 @@ const toolList = [
     { id: 'temp',     icon: '🌡️', cat: 'general'  },
     { id: 'ideals',   icon: '🚶', cat: 'health'   },
     { id: 'square',   icon: '🔢', cat: 'math'     },
-    { id: 'profit',   icon: '📈', cat: 'finance'  }
+    { id: 'profit',   icon: '📈', cat: 'finance'  },
+    { id: 'dollar',   icon: '💵', cat: 'finance'  },
+    { id: 'currency', icon: '💱', cat: 'finance'  },
+    { id: 'calorie',  icon: '🔥', cat: 'health'   }
 ];
 
 // ─── تاریخ شمسی پویا ───────────────────────────────────────────────────────
@@ -120,6 +129,56 @@ function calcAge(birthYear) {
         return { error: 'سال تولد نامعتبر' };
     }
     return { age: currentYear - birthYear };
+}
+
+// ─── تبدیل تومان به دلار ──────────────────────────────────────────────────
+function calcDollar(amount, rate) {
+    if (amount <= 0 || rate <= 0) {
+        return { error: 'مقادیر نامعتبر' };
+    }
+    const dollar = amount / rate;
+    return { 
+        dollar: Math.round(dollar * 100) / 100,
+        formatted: dollar.toFixed(2) + ' $'
+    };
+}
+
+// ─── تبدیل ارز ──────────────────────────────────────────────────────────────
+function calcCurrency(amount, fromRate, toRate) {
+    if (amount <= 0 || fromRate <= 0 || toRate <= 0) {
+        return { error: 'مقادیر نامعتبر' };
+    }
+    const result = (amount / fromRate) * toRate;
+    return { 
+        result: Math.round(result * 100) / 100,
+        formatted: result.toFixed(2)
+    };
+}
+
+// ─── محاسبه کالری سوزی ──────────────────────────────────────────────────────
+function calcCalorie(weight, duration, activityType) {
+    if (weight <= 0 || duration <= 0) {
+        return { error: 'مقادیر نامعتبر' };
+    }
+    
+    // ضرایب فعالیت (MET values)
+    const metValues = {
+        'walking': 3.5,
+        'running': 8.0,
+        'cycling': 6.0,
+        'swimming': 7.0,
+        'yoga': 2.5,
+        'gym': 5.0,
+        'default': 4.0
+    };
+    
+    const met = metValues[activityType] || metValues['default'];
+    const calories = (met * weight * duration) / 60;
+    
+    return { 
+        calories: Math.round(calories),
+        met: met
+    };
 }
 
 // ─── بوت ───────────────────────────────────────────────────────────────────

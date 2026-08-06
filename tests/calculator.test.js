@@ -47,6 +47,35 @@ function calcAge(birthYear) {
     return { age: currentYear - birthYear };
 }
 
+function calcDollar(amount, rate) {
+    if (amount <= 0 || rate <= 0) return { error: 'مقادیر نامعتبر' };
+    const dollar = amount / rate;
+    return { 
+        dollar: Math.round(dollar * 100) / 100,
+        formatted: dollar.toFixed(2) + ' $'
+    };
+}
+
+function calcCurrency(amount, fromRate, toRate) {
+    if (amount <= 0 || fromRate <= 0 || toRate <= 0) return { error: 'مقادیر نامعتبر' };
+    const result = (amount / fromRate) * toRate;
+    return { 
+        result: Math.round(result * 100) / 100,
+        formatted: result.toFixed(2)
+    };
+}
+
+function calcCalorie(weight, duration, activityType) {
+    if (weight <= 0 || duration <= 0) return { error: 'مقادیر نامعتبر' };
+    const metValues = {
+        'walking': 3.5, 'running': 8.0, 'cycling': 6.0,
+        'swimming': 7.0, 'yoga': 2.5, 'gym': 5.0, 'default': 4.0
+    };
+    const met = metValues[activityType] || metValues['default'];
+    const calories = (met * weight * duration) / 60;
+    return { calories: Math.round(calories), met: met };
+}
+
 // ===== تست‌ها =====
 const tests = [];
 let passed = 0;
@@ -188,6 +217,47 @@ test('generatePassword: حداقل طول', () => {
 test('generatePassword: حداکثر طول', () => {
     const pass = generatePassword(100);
     expect(pass.length).toBe(32);
+});
+
+// ===== تست‌های calcDollar =====
+test('calcDollar: تبدیل تومان به دلار', () => {
+    const result = calcDollar(500000, 50000);
+    expect(result.dollar).toBe(10);
+    expect(result.formatted).toBe('10.00 $');
+});
+
+test('calcDollar: مقادیر نامعتبر', () => {
+    const result = calcDollar(0, 50000);
+    expect(result).toHaveProperty('error');
+});
+
+// ===== تست‌های calcCurrency =====
+test('calcCurrency: تبدیل ارز', () => {
+    const result = calcCurrency(100, 1, 50000);
+    expect(result.result).toBe(5000000);
+});
+
+test('calcCurrency: مقادیر نامعتبر', () => {
+    const result = calcCurrency(0, 1, 50000);
+    expect(result).toHaveProperty('error');
+});
+
+// ===== تست‌های calcCalorie =====
+test('calcCalorie: دویدن', () => {
+    const result = calcCalorie(70, 30, 'running');
+    expect(result.calories).toBe(280);
+    expect(result.met).toBe(8.0);
+});
+
+test('calcCalorie: پیاده‌روی', () => {
+    const result = calcCalorie(70, 30, 'walking');
+    expect(result.calories).toBe(123);
+    expect(result.met).toBe(3.5);
+});
+
+test('calcCalorie: مقادیر نامعتبر', () => {
+    const result = calcCalorie(0, 30, 'running');
+    expect(result).toHaveProperty('error');
 });
 
 // ===== نتیجه =====
