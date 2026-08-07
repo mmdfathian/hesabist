@@ -271,7 +271,16 @@ function openTool(id, pushState = true) {
     i2.style.display = toolData.p2 ? 'block' : 'none';
     i3.style.display = toolData.p3 ? 'block' : 'none';
     if (toolData.p2) i2.placeholder = toolData.p2;
-    if (toolData.p3) i3.placeholder = toolData.p3;
+    if (toolData.p3) {
+        if (currentToolId === 'calorie') {
+            i3.style.display = 'block';
+            i3.type = 'text';
+            i3.placeholder = toolData.p3;
+            i3.setAttribute('list', 'activity-list');
+        } else {
+            i3.placeholder = toolData.p3;
+        }
+    }
 
     document.title = toolData.title + " آنلاین | حسابیست";
     window.scrollTo(0, 0);
@@ -402,6 +411,35 @@ document.getElementById('btn-calc').onclick = () => {
         case 'profit':
             if (isNaN(v2) || v2 < 0) { result = '⚠️'; break; }
             result = Math.round((v1 * v2 / 100) / 12).toLocaleString(currentLang === 'fa' ? 'fa-IR' : 'en-US');
+            break;
+
+        case 'dollar':
+            if (isNaN(v2) || v2 <= 0) { result = currentLang === 'fa' ? '⚠️ نرخ دلار معتبر نیست' : '⚠️ Invalid rate'; break; }
+            result = calcDollar(v1, v2).formatted;
+            break;
+
+        case 'currency':
+            if (isNaN(v2) || isNaN(v3) || v2 <= 0 || v3 <= 0) { result = currentLang === 'fa' ? '⚠️ نرخ ارز معتبر نیست' : '⚠️ Invalid rate'; break; }
+            result = calcCurrency(v1, v2, v3).formatted;
+            break;
+
+        case 'calorie':
+            const actInput = document.getElementById('inp3').value.trim().toLowerCase();
+            const activityMap = {
+                'پیاده‌روی': 'walking', 'walking': 'walking', 'walk': 'walking',
+                'دویدن': 'running', 'running': 'running', 'run': 'running',
+                'دوچرخه': 'cycling', 'دوچرخه‌سواری': 'cycling', 'cycling': 'cycling', 'cycle': 'cycling',
+                'شنا': 'swimming', 'swimming': 'swimming', 'swim': 'swimming',
+                'یوگا': 'yoga', 'yoga': 'yoga',
+                'بدنسازی': 'gym', 'gym': 'gym', 'ورزش': 'gym',
+            };
+            const actType = activityMap[actInput] || 'default';
+            const calorieResult = calcCalorie(v1, v2, actType);
+            const actNames = { fa: { walking: 'پیاده‌روی', running: 'دویدن', cycling: 'دوچرخه‌سواری', swimming: 'شنا', yoga: 'یوگا', gym: 'بدنسازی', default: 'عمومی' }, en: { walking: 'Walking', running: 'Running', cycling: 'Cycling', swimming: 'Swimming', yoga: 'Yoga', gym: 'Gym', default: 'General' } };
+            const actName = actNames[currentLang][actType] || actNames[currentLang].default;
+            result = currentLang === 'fa'
+                ? `${actName}: ${calorieResult.calories} کالری (MET: ${calorieResult.met})`
+                : `${actName}: ${calorieResult.calories} kcal (MET: ${calorieResult.met})`;
             break;
     }
 
