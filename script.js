@@ -415,12 +415,16 @@ document.getElementById('btn-calc').onclick = () => {
 
         case 'dollar':
             if (isNaN(v2) || v2 <= 0) { result = currentLang === 'fa' ? '⚠️ نرخ دلار معتبر نیست' : '⚠️ Invalid rate'; break; }
-            result = calcDollar(v1, v2).formatted;
+            var dr = calcDollar(v1, v2);
+            if (dr.error) { result = '⚠️ ' + dr.error; break; }
+            result = dr.formatted;
             break;
 
         case 'currency':
             if (isNaN(v2) || isNaN(v3) || v2 <= 0 || v3 <= 0) { result = currentLang === 'fa' ? '⚠️ نرخ ارز معتبر نیست' : '⚠️ Invalid rate'; break; }
-            result = calcCurrency(v1, v2, v3).formatted;
+            var cr = calcCurrency(v1, v2, v3);
+            if (cr.error) { result = '⚠️ ' + cr.error; break; }
+            result = cr.formatted;
             break;
 
         case 'calorie':
@@ -444,7 +448,7 @@ document.getElementById('btn-calc').onclick = () => {
     }
 
     resEl.innerText = result;
-    copyBtn.style.display = result.startsWith('⚠️') ? 'none' : 'inline-block';
+    copyBtn.style.display = (result && result.indexOf('⚠️') === -1) ? 'inline-block' : 'none';
 };
 
 function searchTools() {
