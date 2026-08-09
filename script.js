@@ -427,7 +427,7 @@ document.getElementById('btn-calc').onclick = () => {
             result = cr.formatted;
             break;
 
-        case 'calorie':
+        case 'calorie': {
             const actInput = document.getElementById('inp3').value.trim().toLowerCase();
             const activityMap = {
                 'پیاده‌روی': 'walking', 'walking': 'walking', 'walk': 'walking',
@@ -445,6 +445,7 @@ document.getElementById('btn-calc').onclick = () => {
                 ? `${actName}: ${calorieResult.calories} کالری (MET: ${calorieResult.met})`
                 : `${actName}: ${calorieResult.calories} kcal (MET: ${calorieResult.met})`;
             break;
+        }
     }
 
     resEl.innerText = result;
