@@ -177,12 +177,14 @@ function calcDollar(amount, rate) {
 }
 
 // ─── تبدیل ارز ──────────────────────────────────────────────────────────────
+// fromRate/toRate = Toman per 1 unit of that currency
 function calcCurrency(amount, fromRate, toRate) {
     if (amount <= 0 || fromRate <= 0 || toRate <= 0) {
         return { error: 'مقادیر نامعتبر' };
     }
-    const result = (amount / fromRate) * toRate;
-    return { 
+    const toman = amount * fromRate;
+    const result = toman / toRate;
+    return {
         result: Math.round(result * 100) / 100,
         formatted: result.toFixed(2)
     };
@@ -497,7 +499,7 @@ document.getElementById('btn-calc').onclick = () => {
             if (v1 <= 0) { result = currentLang === 'fa' ? '⚠️ مبلغ معتبر وارد کنید' : '⚠️ Enter valid amount'; break; }
             var fromRate = currencyData[selFrom.value].rate;
             var toRate = currencyData[selTo.value].rate;
-            var converted = (v1 / fromRate) * toRate;
+            var converted = (v1 * fromRate) / toRate;
             var fName = currencyData[selFrom.value].name;
             var tName = currencyData[selTo.value].name;
             result = currentLang === 'fa'

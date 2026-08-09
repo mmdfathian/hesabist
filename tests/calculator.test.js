@@ -58,8 +58,9 @@ function calcDollar(amount, rate) {
 
 function calcCurrency(amount, fromRate, toRate) {
     if (amount <= 0 || fromRate <= 0 || toRate <= 0) return { error: 'مقادیر نامعتبر' };
-    const result = (amount / fromRate) * toRate;
-    return { 
+    const toman = amount * fromRate;
+    const result = toman / toRate;
+    return {
         result: Math.round(result * 100) / 100,
         formatted: result.toFixed(2)
     };
@@ -233,8 +234,15 @@ test('calcDollar: مقادیر نامعتبر', () => {
 
 // ===== تست‌های calcCurrency =====
 test('calcCurrency: تبدیل ارز', () => {
+    // 100 واحد با نرخ 1 تومان/واحد → 100 تومان → با نرخ 50000 تومان/واحد = 0.002 واحد
     const result = calcCurrency(100, 1, 50000);
-    expect(result.result).toBe(5000000);
+    expect(result.result).toBe(0); // 100/50000 = 0.002 → rounded = 0
+    // تست دقیق‌تر: 5 میلیون تومان از IRR(1) به USD(50000)
+    const r2 = calcCurrency(5000000, 1, 50000);
+    expect(r2.result).toBe(100); // 5M * 1 / 50000 = 100$
+    // تست USD → EUR: 1000$ با نرخ 50000 → 50M تومان → با نرخ 55000 ≈ 909€
+    const r3 = calcCurrency(1000, 50000, 55000);
+    expect(r3.result).toBe(909.09); // 50M / 55000 = 909.09 → rounded = 909.09
 });
 
 test('calcCurrency: مقادیر نامعتبر', () => {
