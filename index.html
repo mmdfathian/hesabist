@@ -110,11 +110,18 @@
 <script src="script.js?v=2.0"></script>
     <style>
     .dynamic-select {
-        width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0;
-        border-radius: 12px; font-size: 16px; background: #f5f7fa;
-        color: #333; direction: rtl; margin-bottom: 12px; appearance: auto;
+        width: 100%; padding: 18px; border-radius: 15px;
+        border: 2px solid var(--bg); background: var(--bg);
+        color: var(--text); font-size: 1.1rem; margin-bottom: 15px;
+        outline: none; transition: border-color 0.3s;
+        appearance: none; -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: left 16px center;
+        cursor: pointer;
     }
-    .dark-mode .dynamic-select { background: #2a2a3e; color: #e0e0e0; border-color: #444; }
+    .dynamic-select:focus { border-color: var(--primary); }
+    .dark-mode .dynamic-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='2' fill='none'/%3E%3C/svg%3E"); }
+    .dynamic-select option { background: var(--bg); color: var(--text); padding: 10px; }
     </style>
     <datalist id="activity-list">
         <option value="walking" data-fa="پیاده‌روی" data-en="Walking">

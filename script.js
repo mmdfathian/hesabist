@@ -323,6 +323,7 @@ function openTool(id, pushState = true) {
         const selFrom = document.createElement('select');
         selFrom.id = 'sel-from';
         selFrom.className = 'dynamic-select';
+        selFrom.setAttribute('autocomplete', 'off');
         selFrom.innerHTML = '<option value="">' + (isFa ? 'ارز مبدأ را انتخاب کنید' : 'Select source currency') + '</option>' +
             Object.entries(currencyData).map(([code, d]) =>
                 '<option value="' + code + '">' + d.name + ' (' + code + ')</option>'
@@ -332,6 +333,7 @@ function openTool(id, pushState = true) {
         const selTo = document.createElement('select');
         selTo.id = 'sel-to';
         selTo.className = 'dynamic-select';
+        selTo.setAttribute('autocomplete', 'off');
         selTo.innerHTML = '<option value="">' + (isFa ? 'ارز مقصد را انتخاب کنید' : 'Select target currency') + '</option>' +
             Object.entries(currencyData).map(([code, d]) =>
                 '<option value="' + code + '">' + d.name + ' (' + code + ')</option>'
@@ -347,6 +349,7 @@ function openTool(id, pushState = true) {
         const selAct = document.createElement('select');
         selAct.id = 'sel-activity';
         selAct.className = 'dynamic-select';
+        selAct.setAttribute('autocomplete', 'off');
         selAct.innerHTML = '<option value="">' + (isFa ? 'نوع فعالیت را انتخاب کنید' : 'Select activity type') + '</option>' +
             acts.map(function(a) { return '<option value="' + a[0] + '">' + a[1] + '</option>'; }).join('');
         inputsGroup.appendChild(selAct);
