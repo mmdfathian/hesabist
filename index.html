@@ -10,13 +10,13 @@
 <link rel="canonical" href="https://hesabist-app.ir/">
 
 <!-- SEO -->
-<meta name="description" content="حسابیست | مجموعه ابزارهای محاسباتی هوشمند شامل درصدگیری، مالیات، BMI و تبدیل واحدها">
-<meta name="keywords" content="حسابیست, محاسبه آنلاین, BMI, مالیات, وام, تخفیف, ابزار محاسباتی">
+<meta name="description" content="حسابیست | مجموعه ابزارهای محاسباتی و محتوایی هوشمند — بیش از ۴۰ ابزار رایگان">
+<meta name="keywords" content="حسابیست, محاسبه آنلاین, BMI, مالیات, وام, تخفیف, تبدیل واحد, Base64, QR, تقویم, ساعت جهانی">
 <meta name="google-site-verification" content="-RpIGkJ4ya58U23m3aHpeIOrL4Smbqx_kz6NEDk-xSg" />
 
 <!-- Open Graph -->
-<meta property="og:title" content="حسابیست | ابزارهای محاسباتی هوشمند">
-<meta property="og:description" content="درصدگیری، مالیات، BMI، وام، تخفیف و بیشتر — رایگان و آنلاین">
+<meta property="og:title" content="حسابیست | بیش از ۴۰ ابزار رایگان">
+<meta property="og:description" content="ابزارهای محاسباتی، محتوایی، مالی و رسانه — رایگان و آنلاین">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hesabist-app.ir/">
 <meta property="og:image" content="https://hesabist-app.ir/og-image.png">
@@ -24,8 +24,8 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="حسابیست | ابزارهای محاسباتی هوشمند">
-<meta name="twitter:description" content="درصدگیری، مالیات، BMI، وام، تخفیف و بیشتر — رایگان و آنلاین">
+<meta name="twitter:title" content="حسابیست | بیش از ۴۰ ابزار رایگان">
+<meta name="twitter:description" content="ابزارهای محاسباتی، محتوایی، مالی و رسانه — رایگان و آنلاین">
 <meta name="twitter:image" content="https://hesabist-app.ir/og-image.png">
 </head>
 <body class="theme-blue">
@@ -74,9 +74,9 @@
     </div>
     <div class="calc-container">
       <div class="inputs-group">
-        <input type="number" id="inp1" inputmode="decimal">
-        <input type="number" id="inp2" inputmode="decimal" style="display:none;">
-        <input type="number" id="inp3" inputmode="decimal" style="display:none;">
+        <input type="text" id="inp1" inputmode="text">
+        <input type="text" id="inp2" style="display:none;">
+        <input type="text" id="inp3" style="display:none;">
       </div>
       <button id="btn-calc" class="calc-action-btn">محاسبه نهایی</button>
       <div class="result-display">
@@ -107,29 +107,21 @@
   </div>
 </div>
 
-<script src="script.js?v=2.0"></script>
-    <style>
-    .dynamic-select {
-        width: 100%; padding: 18px; border-radius: 15px;
-        border: 2px solid var(--bg); background: var(--bg);
-        color: var(--text); font-size: 1.1rem; margin-bottom: 15px;
-        outline: none; transition: border-color 0.3s;
-        appearance: none; -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-        background-repeat: no-repeat; background-position: left 16px center;
-        cursor: pointer;
-    }
-    .dynamic-select:focus { border-color: var(--primary); }
-    .dark-mode .dynamic-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='2' fill='none'/%3E%3C/svg%3E"); }
-    .dynamic-select option { background: var(--bg); color: var(--text); padding: 10px; }
-    </style>
-    <datalist id="activity-list">
-        <option value="walking" data-fa="پیاده‌روی" data-en="Walking">
-        <option value="running" data-fa="دویدن" data-en="Running">
-        <option value="cycling" data-fa="دوچرخه‌سواری" data-en="Cycling">
-        <option value="swimming" data-fa="شنا" data-en="Swimming">
-        <option value="yoga" data-fa="یوگا" data-en="Yoga">
-        <option value="gym" data-fa="بدنسازی" data-en="Gym">
-    </datalist>
+<script src="script.js?v=3.0"></script>
+<style>
+.dynamic-select {
+    width: 100%; padding: 18px; border-radius: 15px;
+    border: 2px solid var(--bg); background: var(--bg);
+    color: var(--text); font-size: 1.1rem; margin-bottom: 15px;
+    outline: none; transition: border-color 0.3s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 16px center;
+    cursor: pointer;
+}
+.dynamic-select:focus { border-color: var(--primary); }
+.dark-mode .dynamic-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='2' fill='none'/%3E%3C/svg%3E"); }
+.dynamic-select option { background: var(--bg); color: var(--text); padding: 10px; }
+</style>
 </body>
 </html>

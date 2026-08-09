@@ -1,5 +1,5 @@
 // نسخه cache به صورت خودکار از timestamp ساخته می‌شه
-const CACHE_VERSION = 'hesabist-v3.0';
+const CACHE_VERSION = 'hesabist-v4.0';
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS_TO_CACHE = [
