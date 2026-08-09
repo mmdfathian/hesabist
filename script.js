@@ -22,7 +22,7 @@ const dictionary = {
             square:   { title: "توان دوم",    p1: "عدد",          desc: "محاسبه آنلاین توان دوم (مجذور) اعداد." },
             profit:   { title: "سود بانکی",   p1: "سرمایه (تومان)", p2: "سود سالانه (%)", desc: "محاسبه آنلاین سود سپرده بانکی ماهانه و سالانه." },
             dollar:   { title: "قیمت دلار",   p1: "مبلغ (تومان)",  p2: "نرخ دلار",     desc: "تبدیل تومان به دلار با نرخ روز." },
-            currency: { title: "نرخ ارز",      p1: "مبلغ",          p2: "از ارز",        p3: "به ارز", desc: "تبدیل ارزهای مختلف به یکدیگر." },
+            currency: { title: "نرخ ارز",      p1: "مبلغ",          p2: "نرخ ارز مبدأ",   p3: "نرخ ارز مقصد", desc: "تبدیل ارزهای مختلف. نرخ‌ها رو به عدد وارد کنید." },
             calorie:  { title: "کالری‌سوزی",   p1: "وزن (کیلو)",    p2: "زمان (دقیقه)",  p3: "نوع فعالیت", desc: "محاسبه کالری سوزانده شده در ورزش." }
         }
     },
@@ -46,7 +46,7 @@ const dictionary = {
             square:   { title: "Square (x²)",   p1: "Number" },
             profit:   { title: "Bank Profit",   p1: "Deposit",    p2: "APY (%)" },
             dollar:   { title: "Dollar Price",  p1: "Amount (Toman)", p2: "Dollar Rate", desc: "Convert Toman to Dollar with current rate." },
-            currency: { title: "Exchange Rate", p1: "Amount",     p2: "From",         p3: "To", desc: "Convert between different currencies." },
+            currency: { title: "Exchange Rate", p1: "Amount",     p2: "From Rate",    p3: "To Rate", desc: "Convert between currencies. Enter rates as numbers." },
             calorie:  { title: "Calorie Burn",  p1: "Weight (kg)", p2: "Duration (min)", p3: "Activity Type", desc: "Calculate calories burned during exercise." }
         }
     }
@@ -278,7 +278,9 @@ function openTool(id, pushState = true) {
             i3.placeholder = toolData.p3;
             i3.setAttribute('list', 'activity-list');
         } else {
+            i3.type = 'number';
             i3.placeholder = toolData.p3;
+            i3.removeAttribute('list');
         }
     }
 
@@ -428,6 +430,7 @@ document.getElementById('btn-calc').onclick = () => {
             break;
 
         case 'calorie': {
+            if (isNaN(v2) || v2 <= 0) { result = currentLang === 'fa' ? '⚠️ زمان معتبر وارد کنید' : '⚠️ Enter valid duration'; break; }
             const actInput = document.getElementById('inp3').value.trim().toLowerCase();
             const activityMap = {
                 'پیاده‌روی': 'walking', 'walking': 'walking', 'walk': 'walking',
@@ -439,6 +442,7 @@ document.getElementById('btn-calc').onclick = () => {
             };
             const actType = activityMap[actInput] || 'default';
             const calorieResult = calcCalorie(v1, v2, actType);
+            if (calorieResult.error) { result = '⚠️ ' + calorieResult.error; break; }
             const actNames = { fa: { walking: 'پیاده‌روی', running: 'دویدن', cycling: 'دوچرخه‌سواری', swimming: 'شنا', yoga: 'یوگا', gym: 'بدنسازی', default: 'عمومی' }, en: { walking: 'Walking', running: 'Running', cycling: 'Cycling', swimming: 'Swimming', yoga: 'Yoga', gym: 'Gym', default: 'General' } };
             const actName = actNames[currentLang][actType] || actNames[currentLang].default;
             result = currentLang === 'fa'
