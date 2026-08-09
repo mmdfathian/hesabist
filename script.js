@@ -72,6 +72,39 @@ const toolList = [
     { id: 'calorie',  icon: '🔥', cat: 'health'   }
 ];
 
+// ─── داده ارزها (نرخ تقریبی به تومان) ────────────────────────────────────────
+const currencyData = {
+    'IRR': { name: 'تومان ایران', rate: 1 },
+    'USD': { name: 'دلار آمریکا', rate: 50000 },
+    'EUR': { name: 'یورو', rate: 55000 },
+    'GBP': { name: 'پوند انگلیس', rate: 63000 },
+    'AED': { name: 'درهم امارات', rate: 13600 },
+    'TRY': { name: 'لیر ترکیه', rate: 1500 },
+    'CNY': { name: 'یوان چین', rate: 7000 },
+    'RUB': { name: 'روبل روسیه', rate: 550 },
+    'AFN': { name: 'افغانی', rate: 700 },
+    'IQD': { name: 'دینار عراق', rate: 38 },
+    'SAR': { name: 'ریال عربستان', rate: 13300 },
+    'PKR': { name: 'روپیه پاکستان', rate: 180 },
+    'INR': { name: 'روپیه هند', rate: 600 },
+    'KWD': { name: 'دینار کویت', rate: 162000 },
+    'QAR': { name: 'ریال قطر', rate: 13700 },
+    'BHD': { name: 'دینار بحرین', rate: 132000 },
+    'OMR': { name: 'ریال عمان', rate: 130000 }
+};
+
+// ─── داده فعالیت‌ها ──────────────────────────────────────────────────────────
+const activityData = {
+    fa: [
+        ['walking', 'پیاده‌روی'], ['running', 'دویدن'], ['cycling', 'دوچرخه‌سواری'],
+        ['swimming', 'شنا'], ['yoga', 'یوگا'], ['gym', 'بدنسازی']
+    ],
+    en: [
+        ['walking', 'Walking'], ['running', 'Running'], ['cycling', 'Cycling'],
+        ['swimming', 'Swimming'], ['yoga', 'Yoga'], ['gym', 'Gym']
+    ]
+};
+
 // ─── تاریخ شمسی پویا ───────────────────────────────────────────────────────
 function getPersianYear() {
     return parseInt(new Date().toLocaleDateString('fa-IR-u-ca-persian', { year: 'numeric' }).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
@@ -271,17 +304,50 @@ function openTool(id, pushState = true) {
     i2.style.display = toolData.p2 ? 'block' : 'none';
     i3.style.display = toolData.p3 ? 'block' : 'none';
     if (toolData.p2) i2.placeholder = toolData.p2;
-    if (toolData.p3) {
-        if (currentToolId === 'calorie') {
-            i3.style.display = 'block';
-            i3.type = 'text';
-            i3.placeholder = toolData.p3;
-            i3.setAttribute('list', 'activity-list');
-        } else {
-            i3.type = 'number';
-            i3.placeholder = toolData.p3;
-            i3.removeAttribute('list');
-        }
+    i3.type = 'number';
+    i3.removeAttribute('list');
+
+    // ─── حذف select‌های قبلی ───
+    document.querySelectorAll('.dynamic-select').forEach(el => el.remove());
+
+    const inputsGroup = document.querySelector('.inputs-group');
+    const isFa = currentLang === 'fa';
+
+    // ─── ابزار نرخ ارز: dropdown انتخاب ارز ───
+    if (id === 'currency') {
+        i2.style.display = 'none';
+        i3.style.display = 'none';
+
+        const selFrom = document.createElement('select');
+        selFrom.id = 'sel-from';
+        selFrom.className = 'dynamic-select';
+        selFrom.innerHTML = '<option value="">' + (isFa ? 'ارز مبدأ را انتخاب کنید' : 'Select source currency') + '</option>' +
+            Object.entries(currencyData).map(([code, d]) =>
+                '<option value="' + code + '">' + d.name + ' (' + code + ')</option>'
+            ).join('');
+        inputsGroup.appendChild(selFrom);
+
+        const selTo = document.createElement('select');
+        selTo.id = 'sel-to';
+        selTo.className = 'dynamic-select';
+        selTo.innerHTML = '<option value="">' + (isFa ? 'ارز مقصد را انتخاب کنید' : 'Select target currency') + '</option>' +
+            Object.entries(currencyData).map(([code, d]) =>
+                '<option value="' + code + '">' + d.name + ' (' + code + ')</option>'
+            ).join('');
+        inputsGroup.appendChild(selTo);
+    }
+
+    // ─── ابزار کالری: dropdown انتخاب فعالیت ───
+    if (id === 'calorie') {
+        i3.style.display = 'none';
+
+        const acts = activityData[currentLang] || activityData.fa;
+        const selAct = document.createElement('select');
+        selAct.id = 'sel-activity';
+        selAct.className = 'dynamic-select';
+        selAct.innerHTML = '<option value="">' + (isFa ? 'نوع فعالیت را انتخاب کنید' : 'Select activity type') + '</option>' +
+            acts.map(function(a) { return '<option value="' + a[0] + '">' + a[1] + '</option>'; }).join('');
+        inputsGroup.appendChild(selAct);
     }
 
     document.title = toolData.title + " آنلاین | حسابیست";
@@ -422,32 +488,35 @@ document.getElementById('btn-calc').onclick = () => {
             result = dr.formatted;
             break;
 
-        case 'currency':
-            if (isNaN(v2) || isNaN(v3) || v2 <= 0 || v3 <= 0) { result = currentLang === 'fa' ? '⚠️ نرخ ارز معتبر نیست' : '⚠️ Invalid rate'; break; }
-            var cr = calcCurrency(v1, v2, v3);
-            if (cr.error) { result = '⚠️ ' + cr.error; break; }
-            result = cr.formatted;
+        case 'currency': {
+            var selFrom = document.getElementById('sel-from');
+            var selTo = document.getElementById('sel-to');
+            if (!selFrom || !selTo || !selFrom.value || !selTo.value) {
+                result = currentLang === 'fa' ? '⚠️ ارزها را انتخاب کنید' : '⚠️ Select both currencies'; break;
+            }
+            if (v1 <= 0) { result = currentLang === 'fa' ? '⚠️ مبلغ معتبر وارد کنید' : '⚠️ Enter valid amount'; break; }
+            var fromRate = currencyData[selFrom.value].rate;
+            var toRate = currencyData[selTo.value].rate;
+            var converted = (v1 / fromRate) * toRate;
+            var fName = currencyData[selFrom.value].name;
+            var tName = currencyData[selTo.value].name;
+            result = currentLang === 'fa'
+                ? v1.toLocaleString('fa-IR') + ' ' + fName + ' = ' + converted.toLocaleString('fa-IR', {maximumFractionDigits: 2}) + ' ' + tName
+                : v1.toLocaleString() + ' ' + selFrom.value + ' = ' + converted.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' ' + selTo.value;
             break;
+        }
 
         case 'calorie': {
-            if (isNaN(v2) || v2 <= 0) { result = currentLang === 'fa' ? '⚠️ زمان معتبر وارد کنید' : '⚠️ Enter valid duration'; break; }
-            const actInput = document.getElementById('inp3').value.trim().toLowerCase();
-            const activityMap = {
-                'پیاده‌روی': 'walking', 'walking': 'walking', 'walk': 'walking',
-                'دویدن': 'running', 'running': 'running', 'run': 'running',
-                'دوچرخه': 'cycling', 'دوچرخه‌سواری': 'cycling', 'cycling': 'cycling', 'cycle': 'cycling',
-                'شنا': 'swimming', 'swimming': 'swimming', 'swim': 'swimming',
-                'یوگا': 'yoga', 'yoga': 'yoga',
-                'بدنسازی': 'gym', 'gym': 'gym', 'ورزش': 'gym',
-            };
-            const actType = activityMap[actInput] || 'default';
-            const calorieResult = calcCalorie(v1, v2, actType);
+            var selActivity = document.getElementById('sel-activity');
+            var actType = (selActivity && selActivity.value) ? selActivity.value : 'default';
+            if (v1 <= 0 || v2 <= 0) { result = currentLang === 'fa' ? '⚠️ وزن و زمان را وارد کنید' : '⚠️ Enter weight and duration'; break; }
+            var calorieResult = calcCalorie(v1, v2, actType);
             if (calorieResult.error) { result = '⚠️ ' + calorieResult.error; break; }
-            const actNames = { fa: { walking: 'پیاده‌روی', running: 'دویدن', cycling: 'دوچرخه‌سواری', swimming: 'شنا', yoga: 'یوگا', gym: 'بدنسازی', default: 'عمومی' }, en: { walking: 'Walking', running: 'Running', cycling: 'Cycling', swimming: 'Swimming', yoga: 'Yoga', gym: 'Gym', default: 'General' } };
-            const actName = actNames[currentLang][actType] || actNames[currentLang].default;
+            var actNames = { fa: { walking: 'پیاده‌روی', running: 'دویدن', cycling: 'دوچرخه‌سواری', swimming: 'شنا', yoga: 'یوگا', gym: 'بدنسازی', default: 'عمومی' }, en: { walking: 'Walking', running: 'Running', cycling: 'Cycling', swimming: 'Swimming', yoga: 'Yoga', gym: 'Gym', default: 'General' } };
+            var actName = actNames[currentLang][actType] || actNames[currentLang].default;
             result = currentLang === 'fa'
-                ? `${actName}: ${calorieResult.calories} کالری (MET: ${calorieResult.met})`
-                : `${actName}: ${calorieResult.calories} kcal (MET: ${calorieResult.met})`;
+                ? actName + ': ' + calorieResult.calories + ' کالری (MET: ' + calorieResult.met + ')'
+                : actName + ': ' + calorieResult.calories + ' kcal (MET: ' + calorieResult.met + ')';
             break;
         }
     }
