@@ -1197,28 +1197,21 @@ document.getElementById('btn-calc').onclick = function() {
 
 // ─── تبدیل تاریخ شمسی به میلادی (ساده) ─────────────────────────────────────
 function jalaliToGregorian(jy, jm, jd) {
-    // Simplified jalali to gregorian conversion
-    var g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
-    var gy = (jy <= 979) ? 621 : 1621;
-    var days = jy * 365 + Math.floor(jy / 33) * 8 + Math.floor(((jy % 33) + 3) / 4);
-    days += (jm < 7) ? (jm - 1) * 31 : (jm - 7) * 30 + 186;
-    days += jd - 1;
-    gy += 4 * Math.floor(days / 146097);
-    days %= 146097;
-    gy += Math.floor(days / 36524);
-    days %= 36524;
-    gy += Math.floor(days / 1461);
-    days %= 1461;
-    gy += Math.floor((days - 1) / 365);
-    days = (days - 1) % 365;
-    var gd = days + 1;
-    var gm;
-    for (gm = 1; gm < 13; gm++) {
-        var v = (gm > 2 && (gy % 4 === 0 && gy % 100 !== 0 || gy % 400 === 0)) ? 1 : 0;
-        if (gd <= g_d_m[gm-1] + [31,28+v,31,30,31,30,31,31,30,31,30,31][gm-1]) break;
-        gd -= g_d_m[gm-1] + [31,28+v,31,30,31,30,31,31,30,31,30,31][gm-1];
+    var jy_ref = 1397;
+    var g_year = 2018, g_month = 3, g_day = 21;
+    var days = 0;
+    var yDiff = jy - jy_ref;
+    for (var y = 0; y < yDiff; y++) {
+        var cyc = (jy_ref + y) % 33;
+        days += [1,5,9,13,17,22,26,30].indexOf(cyc) !== -1 ? 366 : 365;
     }
-    return new Date(gy, gm - 1, gd);
+    for (var m = 1; m < jm; m++) {
+        days += m <= 6 ? 31 : m <= 11 ? 30 : ([1,5,9,13,17,22,26,30].indexOf(jy % 33) !== -1 ? 30 : 29);
+    }
+    days += jd - 1;
+    var result = new Date(g_year, g_month - 1, g_day);
+    result.setDate(result.getDate() + days);
+    return result;
 }
 
 function searchTools() {
