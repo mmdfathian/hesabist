@@ -595,7 +595,7 @@ function openTool(id, pushState) {
         inputsGroup.appendChild(ipUI);
         document.getElementById('btn-calc').style.display = 'none';
         fetch('https://api.ipify.org?format=json').then(function(r) { return r.json(); }).then(function(d) {
-            document.getElementById('ip-result').innerHTML = '<div style="text-align:center;font-size:1.5rem;font-weight:bold;padding:20px;">' + d.ip + '</div>';
+            document.getElementById('ip-result').textContent = d.ip;
         }).catch(function() {
             document.getElementById('ip-result').innerHTML = '<div style="text-align:center;color:red;">خطا در دریافت</div>';
         });
@@ -773,7 +773,7 @@ function renderChecklist() {
     var el = document.getElementById('cl-list');
     if (!el) return;
     el.innerHTML = _checkItems.map(function(item, i) {
-        return '<div style="display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--bg);"><input type="checkbox" ' + (item.done ? 'checked' : '') + ' onchange="toggleCheckItem(' + i + ')" style="width:20px;height:20px;"><span style="flex:1;' + (item.done ? 'text-decoration:line-through;opacity:0.5;' : '') + '">' + item.text + '</span><button onclick="removeCheckItem(' + i + ')" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1.2rem;">×</button></div>';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--bg);"><input type="checkbox" ' + (item.done ? 'checked' : '') + ' onchange="toggleCheckItem(' + i + ')" style="width:20px;height:20px;"><span style="flex:1;' + (item.done ? 'text-decoration:line-through;opacity:0.5;' : '') + '">' + escHtml(item.text) + '</span><button onclick="removeCheckItem(' + i + ')" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:1.2rem;">×</button></div>';
     }).join('');
     localStorage.setItem('hesabist_checklist', JSON.stringify(_checkItems));
 }
@@ -1212,6 +1212,13 @@ function jalaliToGregorian(jy, jm, jd) {
     var result = new Date(g_year, g_month - 1, g_day);
     result.setDate(result.getDate() + days);
     return result;
+}
+
+// ─── XSS Protection ────────────────────────────────────────────────────────
+function escHtml(s) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
 }
 
 function searchTools() {
