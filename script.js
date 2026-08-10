@@ -723,8 +723,12 @@ function renderCalendar(date) {
     var year = date.getFullYear(), month = date.getMonth();
     var firstDay = new Date(year, month, 1).getDay();
     var daysInMonth = new Date(year, month + 1, 0).getDate();
-    var monthNames = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
-    var html = '<div style="display:flex;justify-content:space-between;margin-bottom:12px;"><button onclick="calNav(-1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">◀</button><span style="font-weight:bold;font-size:1.1rem;">' + monthNames[month] + ' ' + year + '</span><button onclick="calNav(1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">▶</button></div>';
+    var monthNamesFa = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+    var monthNamesEn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var monthNames = currentLang === 'fa' ? monthNamesFa : monthNamesEn;
+    var prevArrow = currentLang === 'fa' ? '▶' : '◀';
+    var nextArrow = currentLang === 'fa' ? '◀' : '▶';
+    var html = '<div style="display:flex;justify-content:space-between;margin-bottom:12px;"><button onclick="calNav(-1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">' + prevArrow + '</button><span style="font-weight:bold;font-size:1.1rem;">' + monthNames[month] + ' ' + year + '</span><button onclick="calNav(1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">' + nextArrow + '</button></div>';
     html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
     var dayNames = ['Y','M','T','W','T','F','S'];
     dayNames.forEach(function(d) { html += '<div style="font-weight:bold;padding:8px;font-size:0.8rem;opacity:0.5;">' + d + '</div>'; });
@@ -808,7 +812,7 @@ document.getElementById('btn-calc').onclick = function() {
         switch(currentToolId) {
             case 'base64':
                 try {
-                    if (/^[A-Za-z0-9+/=]/.test(text.trim()) && text.trim().length > 0 && !text.includes('\n')) {
+                    if (/^[A-Za-z0-9+/=]+$/.test(text.trim()) && text.trim().length > 0 && !text.includes('\n') && text.trim().length % 4 === 0) {
                         result = atob(text.trim());
                     } else {
                         result = btoa(unescape(encodeURIComponent(text)));
@@ -891,8 +895,13 @@ document.getElementById('btn-calc').onclick = function() {
                 break;
 
             case 'notepad':
-                localStorage.setItem('hesabist_notepad', text);
-                result = isFa ? '✅ ذخیره شد (' + text.length + ' کاراکتر)' : '✅ Saved (' + text.length + ' chars)';
+                if (!text && localStorage.getItem('hesabist_notepad')) {
+                    document.getElementById('dynamic-textarea').value = localStorage.getItem('hesabist_notepad');
+                    result = isFa ? '📥 یادداشت قبلی بارگذاری شد' : '📥 Previous notes loaded';
+                } else {
+                    localStorage.setItem('hesabist_notepad', text);
+                    result = isFa ? '✅ ذخیره شد (' + text.length + ' کاراکتر)' : '✅ Saved (' + text.length + ' chars)';
+                }
                 break;
 
             case 'bulkUrl':
@@ -951,7 +960,9 @@ document.getElementById('btn-calc').onclick = function() {
 
         case 'bmi':
             if (isNaN(v2) || v2 < 50 || v2 > 250) { result = '⚠️ قد معتبر نیست'; break; }
-            result = (v1 / ((v2/100)**2)).toFixed(1);
+            var bmiRes = calcBMI(v1, v2);
+            if (bmiRes.error) { result = '⚠️ ' + bmiRes.error; break; }
+            result = bmiRes.bmi + ' — ' + bmiRes.category;
             break;
 
         case 'loan':
@@ -1110,9 +1121,9 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'seoGen':
-            var title = document.getElementById('inp1').value;
-            var desc = document.getElementById('inp2') ? document.getElementById('inp2').value : '';
-            var url = document.getElementById('inp3') ? document.getElementById('inp3').value : '';
+            var title = escHtml(document.getElementById('inp1').value);
+            var desc = escHtml(document.getElementById('inp2') ? document.getElementById('inp2').value : '');
+            var url = escHtml(document.getElementById('inp3') ? document.getElementById('inp3').value : '');
             result = '<title>' + title + '</title>\n<meta name="description" content="' + desc + '">\n<meta property="og:title" content="' + title + '">\n<meta property="og:description" content="' + desc + '">\n<meta property="og:url" content="' + url + '">';
             break;
 
@@ -1136,7 +1147,7 @@ document.getElementById('btn-calc').onclick = function() {
             var text = document.getElementById('inp1').value;
             if (!text) { result = '⚠️'; break; }
             var dataUrl = generateQR(text);
-            resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;">';
+            resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;"><div style="font-size:0.75rem;opacity:0.5;margin-top:8px;text-align:center;">' + (isFa ? '⚠️ الگوی بصری — قابل اسکن نیست' : '⚠️ Visual pattern — not scannable') + '</div>';
             copyBtn.style.display = 'none';
             return;
 
@@ -1201,9 +1212,16 @@ function jalaliToGregorian(jy, jm, jd) {
     var g_year = 2018, g_month = 3, g_day = 21;
     var days = 0;
     var yDiff = jy - jy_ref;
-    for (var y = 0; y < yDiff; y++) {
-        var cyc = (jy_ref + y) % 33;
-        days += [1,5,9,13,17,22,26,30].indexOf(cyc) !== -1 ? 366 : 365;
+    if (yDiff >= 0) {
+        for (var y = 0; y < yDiff; y++) {
+            var cyc = (jy_ref + y) % 33;
+            days += [1,5,9,13,17,22,26,30].indexOf(cyc) !== -1 ? 366 : 365;
+        }
+    } else {
+        for (var y = 0; y > yDiff; y--) {
+            var cyc = (jy_ref + y - 1 + 33) % 33;
+            days -= [1,5,9,13,17,22,26,30].indexOf(cyc) !== -1 ? 366 : 365;
+        }
     }
     for (var m = 1; m < jm; m++) {
         days += m <= 6 ? 31 : m <= 11 ? 30 : ([1,5,9,13,17,22,26,30].indexOf(jy % 33) !== -1 ? 30 : 29);
