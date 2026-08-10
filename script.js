@@ -285,50 +285,62 @@ function convertUnit(value, type) {
     return c[type] ? c[type](value) : 'نامعتبر';
 }
 
-// ─── QR Code (minimal implementation) ───────────────────────────────────────
+// ─── QR Code (real QR using qrcode-generator library) ───────────────────────
 function generateQR(text) {
-    if (!text) return '';
-    var c = document.createElement('canvas');
-    var size = 200;
-    c.width = size; c.height = size;
-    var ctx = c.getContext('2d');
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
-    ctx.fillStyle = '#000';
-    // Simple visual QR-like pattern based on text hash
-    var hash = 0;
-    for (var i = 0; i < text.length; i++) { hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0; }
-    var seed = Math.abs(hash);
-    var cellSize = 8;
-    var margin = 20;
-    // Draw finder patterns
-    function drawFinder(x, y) {
-        ctx.fillRect(x, y, 7 * cellSize, 7 * cellSize);
-        ctx.fillStyle = '#fff'; ctx.fillRect(x + cellSize, y + cellSize, 5 * cellSize, 5 * cellSize);
-        ctx.fillStyle = '#000'; ctx.fillRect(x + 2 * cellSize, y + 2 * cellSize, 3 * cellSize, 3 * cellSize);
-    }
-    drawFinder(margin, margin);
-    drawFinder(size - margin - 7 * cellSize, margin);
-    drawFinder(margin, size - margin - 7 * cellSize);
-    // Fill data area with seeded pattern
-    for (var r = 0; r < 21; r++) {
-        for (var col = 0; col < 21; col++) {
-            if ((r < 8 && col < 8) || (r < 8 && col > 12) || (r > 12 && col < 8)) continue;
-            seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-            if (seed % 3 === 0) {
-                ctx.fillRect(margin + col * cellSize, margin + r * cellSize, cellSize, cellSize);
+    if (!text || typeof qrcode === 'undefined') return '';
+    try {
+        var qr = qrcode(0, 'M');
+        qr.addData(text);
+        qr.make();
+        var cellSize = 6;
+        var margin = 20;
+        var moduleCount = qr.getModuleCount();
+        var size = moduleCount * cellSize + margin * 2;
+        var c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, size, size);
+        ctx.fillStyle = '#000';
+        for (var r = 0; r < moduleCount; r++) {
+            for (var col = 0; col < moduleCount; col++) {
+                if (qr.isDark(r, col)) {
+                    ctx.fillRect(margin + col * cellSize, margin + r * cellSize, cellSize, cellSize);
+                }
             }
         }
-    }
-    return c.toDataURL('image/png');
+        return c.toDataURL('image/png');
+    } catch(e) { return ''; }
 }
 
 // ─── فعالیت‌ها ───────────────────────────────────────────────────────────────
+
+// ─── بروزرسانی نرخ ارز از API ──────────────────────────────────────────────
+function fetchCurrencyRates() {
+    fetch('https://open.er-api.com/v6/latest/USD')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data && data.rates) {
+                if (data.rates.IRR) currencyData.USD.rate = Math.round(data.rates.IRR / 10); // IRR to Toman
+                if (data.rates.EUR) currencyData.EUR.rate = Math.round(data.rates.IRR / data.rates.EUR / 10);
+                if (data.rates.GBP) currencyData.GBP.rate = Math.round(data.rates.IRR / data.rates.GBP / 10);
+                if (data.rates.AED) currencyData.AED.rate = Math.round(data.rates.IRR / data.rates.AED / 10);
+                if (data.rates.TRY) currencyData.TRY.rate = Math.round(data.rates.IRR / data.rates.TRY / 10);
+                if (data.rates.CNY) currencyData.CNY.rate = Math.round(data.rates.IRR / data.rates.CNY / 10);
+                if (data.rates.RUB) currencyData.RUB.rate = Math.round(data.rates.IRR / data.rates.RUB / 10);
+                if (data.rates.SAR) currencyData.SAR.rate = Math.round(data.rates.IRR / data.rates.SAR / 10);
+                console.log('Currency rates updated from API');
+            }
+        })
+        .catch(function() { console.log('Currency API fallback to hardcoded rates'); });
+}
 
 // ─── بوت ───────────────────────────────────────────────────────────────────
 window.onload = function() {
     var isDark = localStorage.getItem('hesabist_dark') === 'true';
     if (isDark) document.body.classList.add('dark-mode');
     applyTheme(localStorage.getItem('hesabist_theme') || 'blue');
+    fetchCurrencyRates();
     updateUI();
     setInterval(tickClock, 1000);
     tickClock();
@@ -1147,7 +1159,7 @@ document.getElementById('btn-calc').onclick = function() {
             var text = document.getElementById('inp1').value;
             if (!text) { result = '⚠️'; break; }
             var dataUrl = generateQR(text);
-            resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;"><div style="font-size:0.75rem;opacity:0.5;margin-top:8px;text-align:center;">' + (isFa ? '⚠️ الگوی بصری — قابل اسکن نیست' : '⚠️ Visual pattern — not scannable') + '</div>';
+            resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;">';
             copyBtn.style.display = 'none';
             return;
 
