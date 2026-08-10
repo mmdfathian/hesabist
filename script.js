@@ -406,6 +406,10 @@ function openTool(id, pushState) {
     var i3 = document.getElementById('inp3');
     i1.value = ''; i2.value = ''; i3.value = '';
     i1.placeholder = toolData.p1 || '';
+    // Set inputmode dynamically
+    var numTools = ['math','vat','bmi','loan','discount','age','water','pass','unit','circle','temp','ideals','square','profit','dollar','calorie','eidi','priceCalc','realstate','unitConv','timestampConv'];
+    var isNum = numTools.indexOf(id) !== -1;
+    i1.setAttribute('inputmode', isNum ? 'decimal' : 'text');
     i2.style.display = toolData.p2 ? 'block' : 'none';
     i3.style.display = toolData.p3 ? 'block' : 'none';
     if (toolData.p2) i2.placeholder = toolData.p2;
@@ -456,7 +460,7 @@ function openTool(id, pushState) {
     }
 
     // ─── ابزارهای متنی: textarea ───
-    var textareaTools = ['base64','textAnalyzer','diffChecker','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
+    var textareaTools = ['base64','textAnalyzer','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
     if (textareaTools.indexOf(id) !== -1) {
         i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
         var ta = document.createElement('textarea');
@@ -493,7 +497,17 @@ function openTool(id, pushState) {
 
     // ─── ابزارهای text2 (ورودی دوتایی ساده) ───
     if (id === 'diffChecker') {
-        // handled above
+        i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
+        var ta1 = document.createElement('textarea');
+        ta1.id = 'dynamic-textarea'; ta1.className = 'dynamic-ui';
+        ta1.placeholder = toolData.p1 || ''; ta1.rows = 6;
+        ta1.style.cssText = 'width:100%;padding:14px;border-radius:12px;border:2px solid var(--bg);background:var(--bg);color:var(--text);font-size:1rem;font-family:monospace;resize:vertical;margin-bottom:12px;';
+        inputsGroup.appendChild(ta1);
+        var ta2 = document.createElement('textarea');
+        ta2.id = 'dynamic-textarea2'; ta2.className = 'dynamic-ui';
+        ta2.placeholder = toolData.p2 || ''; ta2.rows = 6;
+        ta2.style.cssText = ta1.style.cssText;
+        inputsGroup.appendChild(ta2);
     }
 
     // ─── ابزار counter ───
@@ -783,7 +797,7 @@ document.getElementById('btn-calc').onclick = function() {
     var isFa = currentLang === 'fa';
 
     // ابزارهای متنی
-    var textareaTools = ['base64','textAnalyzer','diffChecker','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
+    var textareaTools = ['base64','textAnalyzer','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
     if (textareaTools.indexOf(currentToolId) !== -1) {
         var ta = document.getElementById('dynamic-textarea');
         var text = ta ? ta.value : '';
