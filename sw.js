@@ -1,5 +1,5 @@
-// نسخه cache — هر بار آپدیت کنید
-const CACHE_VERSION = 'hesabist-v4.1';
+// نسخه cache — هر بار آپدیت کنید (v4.2)
+const CACHE_VERSION = 'hesabist-v4.2';
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS_TO_CACHE = [

@@ -332,7 +332,13 @@ function fetchCurrencyRates() {
                 console.log('Currency rates updated from API');
             }
         })
-        .catch(function() { console.log('Currency API fallback to hardcoded rates'); });
+        .catch(function() { 
+            console.log('Currency API fallback to hardcoded rates');
+            var el = document.getElementById('res-val');
+            if (el && currentToolId === 'currency') {
+                el.innerText = currentLang === 'fa' ? '⚠️ نرخ ارز آنلاین در دسترس نیست' : '⚠️ Online rates unavailable';
+            }
+        });
 }
 
 // ─── بوت ───────────────────────────────────────────────────────────────────
@@ -491,7 +497,7 @@ function openTool(id, pushState) {
         }
     }
 
-    // ─── ابزارهای ریجکس و ریجکس تستر ───
+    // ─── ابزار regex tester: input + textarea ───
     if (id === 'regexTester') {
         i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
         var regexIn = document.createElement('input');
@@ -505,21 +511,6 @@ function openTool(id, pushState) {
         testIn.rows = 4;
         testIn.style.cssText = 'width:100%;padding:14px;border-radius:12px;border:2px solid var(--bg);background:var(--bg);color:var(--text);font-size:1rem;font-family:monospace;resize:vertical;margin-bottom:12px;';
         inputsGroup.appendChild(testIn);
-    }
-
-    // ─── ابزارهای text2 (ورودی دوتایی ساده) ───
-    if (id === 'diffChecker') {
-        i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
-        var ta1 = document.createElement('textarea');
-        ta1.id = 'dynamic-textarea'; ta1.className = 'dynamic-ui';
-        ta1.placeholder = toolData.p1 || ''; ta1.rows = 6;
-        ta1.style.cssText = 'width:100%;padding:14px;border-radius:12px;border:2px solid var(--bg);background:var(--bg);color:var(--text);font-size:1rem;font-family:monospace;resize:vertical;margin-bottom:12px;';
-        inputsGroup.appendChild(ta1);
-        var ta2 = document.createElement('textarea');
-        ta2.id = 'dynamic-textarea2'; ta2.className = 'dynamic-ui';
-        ta2.placeholder = toolData.p2 || ''; ta2.rows = 6;
-        ta2.style.cssText = ta1.style.cssText;
-        inputsGroup.appendChild(ta2);
     }
 
     // ─── ابزار counter ───
@@ -583,6 +574,7 @@ function openTool(id, pushState) {
 
     // ─── ابزار date converter ───
     if (id === 'dateConv') {
+        i1.placeholder = isFa ? 'تاریخ (۱۴۰۳/۰۵/۱۵)' : 'Date (2024/08/05)';
         i2.style.display = 'none'; i3.style.display = 'none';
     }
 
@@ -722,7 +714,7 @@ function updateWorldClock() {
     cities.forEach(function(tz) {
         var el = document.getElementById('wc-' + tz.replace('/','-'));
         if (el) {
-            try { el.innerText = new Date().toLocaleTimeString('fa-IR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+            try { el.innerText = new Date().toLocaleTimeString(isFa ? 'fa-IR' : 'en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
             catch(e) { el.innerText = '--:--'; }
         }
     });
@@ -733,24 +725,40 @@ function renderCalendar(date) {
     var container = document.getElementById('calendar-container');
     if (!container) return;
     var year = date.getFullYear(), month = date.getMonth();
-    var firstDay = new Date(year, month, 1).getDay();
-    var daysInMonth = new Date(year, month + 1, 0).getDate();
     var monthNamesFa = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
     var monthNamesEn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var monthNames = currentLang === 'fa' ? monthNamesFa : monthNamesEn;
     var prevArrow = currentLang === 'fa' ? '▶' : '◀';
     var nextArrow = currentLang === 'fa' ? '◀' : '▶';
     var html = '<div style="display:flex;justify-content:space-between;margin-bottom:12px;"><button onclick="calNav(-1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">' + prevArrow + '</button><span style="font-weight:bold;font-size:1.1rem;">' + monthNames[month] + ' ' + year + '</span><button onclick="calNav(1)" style="padding:8px 16px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;">' + nextArrow + '</button></div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
-    var dayNames = ['Y','M','T','W','T','F','S'];
-    dayNames.forEach(function(d) { html += '<div style="font-weight:bold;padding:8px;font-size:0.8rem;opacity:0.5;">' + d + '</div>'; });
-    for (var i = 0; i < firstDay; i++) html += '<div></div>';
-    var today = new Date();
-    for (var d = 1; d <= daysInMonth; d++) {
-        var isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
-        var bg = isToday ? 'var(--primary)' : 'transparent';
-        var col = isToday ? '#fff' : 'var(--text)';
-        html += '<div style="padding:10px;border-radius:8px;background:' + bg + ';color:' + col + ';cursor:pointer;">' + d + '</div>';
+    if (currentLang === 'fa') {
+        var dayNamesFa = ['ش','ی','د','س','چ','پ','ج'];
+        html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
+        dayNamesFa.forEach(function(d) { html += '<div style="font-weight:bold;padding:8px;font-size:0.8rem;opacity:0.5;">' + d + '</div>'; });
+        var firstDay = (new Date(year, month, 1).getDay() + 1) % 7;
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (var i = 0; i < firstDay; i++) html += '<div></div>';
+        var today = new Date();
+        for (var d = 1; d <= daysInMonth; d++) {
+            var isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+            var bg = isToday ? 'var(--primary)' : 'transparent';
+            var col = isToday ? '#fff' : 'var(--text)';
+            html += '<div style="padding:10px;border-radius:8px;background:' + bg + ';color:' + col + ';cursor:pointer;">' + d + '</div>';
+        }
+    } else {
+        var dayNamesEn = ['S','M','T','W','T','F','S'];
+        html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
+        dayNamesEn.forEach(function(d) { html += '<div style="font-weight:bold;padding:8px;font-size:0.8rem;opacity:0.5;">' + d + '</div>'; });
+        var firstDay = new Date(year, month, 1).getDay();
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (var i = 0; i < firstDay; i++) html += '<div></div>';
+        var today = new Date();
+        for (var d = 1; d <= daysInMonth; d++) {
+            var isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+            var bg = isToday ? 'var(--primary)' : 'transparent';
+            var col = isToday ? '#fff' : 'var(--text)';
+            html += '<div style="padding:10px;border-radius:8px;background:' + bg + ';color:' + col + ';cursor:pointer;">' + d + '</div>';
+        }
     }
     html += '</div>';
     container.innerHTML = html;
@@ -837,7 +845,7 @@ document.getElementById('btn-calc').onclick = function() {
                 var chars = text.length;
                 var charsNoSpace = text.replace(/\s/g, '').length;
                 var lines = text ? text.split('\n').length : 0;
-                var sentences = text.split(/[.!?؟]+/).filter(function(s){ return s.trim(); }).length;
+                var sentences = text.split(/(?<=[.!?؟])\s+/).filter(function(s){ return s.trim() && s.trim().length > 1; }).length;
                 result = isFa
                     ? 'کلمات: ' + words + ' | کاراکتر: ' + chars + ' | بدون فاصله: ' + charsNoSpace + ' | خطوط: ' + lines + ' | جملات: ' + sentences
                     : 'Words: ' + words + ' | Chars: ' + chars + ' | No space: ' + charsNoSpace + ' | Lines: ' + lines + ' | Sentences: ' + sentences;
@@ -865,8 +873,8 @@ document.getElementById('btn-calc').onclick = function() {
                         .replace(/;\s*/g, ';\n')
                         .split('\n').map(function(line) {
                             line = line.trim();
-                            if (line === '}') indent--;
-                            var out = '  '.repeat(Math.max(0, indent)) + line;
+                            if (line === '}') indent = Math.max(0, indent - 1);
+                            var out = '  '.repeat(indent) + line;
                             if (line.endsWith('{')) indent++;
                             return out;
                         }).join('\n');
@@ -875,7 +883,8 @@ document.getElementById('btn-calc').onclick = function() {
 
             case 'codeMinifier':
                 result = text.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '')
-                    .replace(/\s+/g, ' ').replace(/\s*([{};,=+\-*/<>!&|])\s*/g, '$1').trim();
+                    .replace(/\s*([{};,=+\-*/<>!&|])\s*/g, '$1')
+                    .replace(/\s+/g, ' ').trim();
                 break;
 
             case 'jsonFormatter':
@@ -885,15 +894,15 @@ document.getElementById('btn-calc').onclick = function() {
                 break;
 
             case 'listSorter':
-                var lines = text.split('\n').filter(function(l){ return l.trim(); });
+                var listLines = text.split('\n').filter(function(l){ return l.trim(); });
                 var sortType = 'alpha';
-                if (lines.every(function(l){ return !isNaN(parseFloat(l)); })) sortType = 'num';
+                if (listLines.every(function(l){ return !isNaN(parseFloat(l)); })) sortType = 'num';
                 if (sortType === 'num') {
-                    lines.sort(function(a,b){ return parseFloat(a) - parseFloat(b); });
+                    listLines.sort(function(a,b){ return parseFloat(a) - parseFloat(b); });
                 } else {
-                    lines.sort(function(a,b){ return a.localeCompare(b, 'fa'); });
+                    listLines.sort(function(a,b){ return a.localeCompare(b, 'fa'); });
                 }
-                result = lines.join('\n');
+                result = listLines.join('\n');
                 break;
 
             case 'charConverter':
@@ -919,11 +928,14 @@ document.getElementById('btn-calc').onclick = function() {
             case 'bulkUrl':
                 var urls = text.split('\n').map(function(u){ return u.trim(); }).filter(function(u){ return u; });
                 var opened = 0;
-                urls.forEach(function(url) {
+                urls.forEach(function(url, idx) {
                     if (!url.startsWith('http')) url = 'https://' + url;
-                    try { window.open(url, '_blank'); opened++; } catch(e) {}
+                    setTimeout(function() {
+                        try { window.open(url, '_blank'); } catch(e) {}
+                    }, idx * 300);
+                    opened++;
                 });
-                result = isFa ? '✅ ' + opened + ' لینک باز شد' : '✅ ' + opened + ' links opened';
+                result = isFa ? '✅ ' + opened + ' لینک باز شد (با تاخیر)' : '✅ ' + opened + ' links opening...';
                 break;
         }
         resEl.innerText = result;
@@ -971,6 +983,7 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'bmi':
+            if (isNaN(v1) || v1 <= 0 || v1 > 500) { result = '⚠️ وزن معتبر نیست'; break; }
             if (isNaN(v2) || v2 < 50 || v2 > 250) { result = '⚠️ قد معتبر نیست'; break; }
             var bmiRes = calcBMI(v1, v2);
             if (bmiRes.error) { result = '⚠️ ' + bmiRes.error; break; }
@@ -993,7 +1006,10 @@ document.getElementById('btn-calc').onclick = function() {
         case 'age':
             var persianYear = getPersianYear();
             var gregorianYear = new Date().getFullYear();
-            var age = isFa ? persianYear - v1 : gregorianYear - v1;
+            var birthYear = v1;
+            if (isFa && (birthYear < 1000 || birthYear > persianYear)) { result = '⚠️ سال تولد معتبر نیست'; break; }
+            if (!isFa && (birthYear < 1900 || birthYear > gregorianYear)) { result = '⚠️ Birth year invalid'; break; }
+            var age = isFa ? persianYear - birthYear : gregorianYear - birthYear;
             if (age < 0 || age > 150) { result = '⚠️ سال تولد معتبر نیست'; break; }
             result = age + (isFa ? ' سال' : ' years');
             break;
@@ -1003,7 +1019,12 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'pass':
-            result = generatePassword(v1);
+            var passLen = parseInt(document.getElementById('inp1').value);
+            if (isNaN(passLen) || passLen < 4 || passLen > 64) {
+                result = isFa ? '⚠️ طول ۴ تا ۶۴' : '⚠️ Length 4-64';
+            } else {
+                result = generatePassword(passLen);
+            }
             break;
 
         case 'unit':
@@ -1149,9 +1170,9 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'ogPreview':
-            var title = document.getElementById('inp1').value;
-            var desc = document.getElementById('inp2') ? document.getElementById('inp2').value : '';
-            var img = document.getElementById('inp3') ? document.getElementById('inp3').value : '';
+            var title = escHtml(document.getElementById('inp1').value);
+            var desc = escHtml(document.getElementById('inp2') ? document.getElementById('inp2').value : '');
+            var img = escHtml(document.getElementById('inp3') ? document.getElementById('inp3').value : '');
             result = 'OG Title: ' + title + '\nOG Description: ' + desc + '\nOG Image: ' + img;
             break;
 
@@ -1174,7 +1195,6 @@ document.getElementById('btn-calc').onclick = function() {
                 canvas.width = img.width; canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
                 var mime = 'image/' + format;
-                if (format === 'jpeg') mime = 'image/jpeg';
                 var dataUrl = canvas.toDataURL(mime, 0.9);
                 var link = document.createElement('a');
                 link.download = 'converted.' + format;
@@ -1195,7 +1215,7 @@ document.getElementById('btn-calc').onclick = function() {
             img.onload = function() {
                 canvas.width = img.width; canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
-                ctx.font = 'bold ' + Math.max(24, img.width / 15) + 'px Vazirmatn, sans-serif';
+                ctx.font = 'bold ' + Math.max(24, img.width / 15) + 'px Vazirmatn, Tahoma, Arial, sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.strokeStyle = '#000';
                 ctx.lineWidth = 3;
