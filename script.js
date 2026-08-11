@@ -879,7 +879,7 @@ document.getElementById('btn-calc').onclick = function() {
                         if (lines2[i]) diff.push('+ ' + lines2[i]);
                     }
                 }
-                result = diff.length ? diff.join('\n') : (isFa ? '✅ متن‌ها identical' : '✅ Texts are identical');
+                result = diff.length ? diff.join('\n') : (isFa ? '✅ متن‌ها یکسان هستند' : '✅ Texts are identical');
                 break;
 
             case 'codeBeautifier':
