@@ -379,6 +379,7 @@ function tickClock() {
 
 // ─── UI ─────────────────────────────────────────────────────────────────────
 function updateUI() {
+    var isFa = currentLang === 'fa';
     var lang = dictionary[currentLang];
     document.querySelector('.brand-info h1').innerText = lang.title;
     document.querySelector('.brand-info span').innerText = lang.sub;
@@ -494,7 +495,7 @@ function openTool(id, pushState) {
         ta.rows = id === 'notepad' ? 12 : 6;
         ta.style.cssText = 'width:100%;padding:14px;border-radius:12px;border:2px solid var(--bg);background:var(--bg);color:var(--text);font-size:1rem;font-family:monospace;resize:vertical;margin-bottom:12px;';
         inputsGroup.appendChild(ta);
-        if (id === 'diffChecker' || id === 'regexTester') {
+        if (id === 'diffChecker') {
             var ta2 = document.createElement('textarea');
             ta2.id = 'dynamic-textarea2'; ta2.className = 'dynamic-ui';
             ta2.placeholder = toolData.p2 || '';
@@ -652,7 +653,7 @@ function openTool(id, pushState) {
         document.getElementById('btn-calc').innerText = isFa ? 'افزودن متن' : 'Add Text';
     }
 
-    document.title = toolData.title + ' آنلاین | حسابیست';
+    document.title = isFa ? toolData.title + ' آنلاین | حسابیست' : toolData.title + ' Online | HESABIST';
     window.scrollTo(0, 0);
 }
 
@@ -860,7 +861,7 @@ document.getElementById('btn-calc').onclick = function() {
                 var chars = text.length;
                 var charsNoSpace = text.replace(/\s/g, '').length;
                 var lines = text ? text.split('\n').length : 0;
-                var sentences = text.split(/(?<=[.!?؟])\s+/).filter(function(s){ return s.trim() && s.trim().length > 1; }).length;
+                var sentences = text.replace(/[^.!?؟\s]/g, '').split(/\s+/).filter(function(s){ return s.trim(); }).length;
                 result = isFa
                     ? 'کلمات: ' + words + ' | کاراکتر: ' + chars + ' | بدون فاصله: ' + charsNoSpace + ' | خطوط: ' + lines + ' | جملات: ' + sentences
                     : 'Words: ' + words + ' | Chars: ' + chars + ' | No space: ' + charsNoSpace + ' | Lines: ' + lines + ' | Sentences: ' + sentences;
@@ -873,7 +874,7 @@ document.getElementById('btn-calc').onclick = function() {
                 var maxLen = Math.max(lines1.length, lines2.length);
                 for (var i = 0; i < maxLen; i++) {
                     if (lines1[i] !== lines2[i]) {
-                        diff.push('خط ' + (i+1) + ':');
+                        diff.push((isFa ? 'خط ' : 'Line ') + (i+1) + ':');
                         if (lines1[i]) diff.push('- ' + lines1[i]);
                         if (lines2[i]) diff.push('+ ' + lines2[i]);
                     }
@@ -998,8 +999,8 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'bmi':
-            if (isNaN(v1) || v1 <= 0 || v1 > 500) { result = '⚠️ وزن معتبر نیست'; break; }
-            if (isNaN(v2) || v2 < 50 || v2 > 250) { result = '⚠️ قد معتبر نیست'; break; }
+            if (isNaN(v1) || v1 <= 0 || v1 > 500) { result = isFa ? '⚠️ وزن معتبر نیست' : '⚠️ Invalid weight'; break; }
+            if (isNaN(v2) || v2 < 50 || v2 > 250) { result = isFa ? '⚠️ قد معتبر نیست' : '⚠️ Invalid height'; break; }
             var bmiRes = calcBMI(v1, v2);
             if (bmiRes.error) { result = '⚠️ ' + bmiRes.error; break; }
             result = bmiRes.bmi + ' — ' + bmiRes.category;
@@ -1013,7 +1014,7 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'discount':
-            if (isNaN(v2) || v2 < 0 || v2 > 100) { result = '⚠️ درصد ۰ تا ۱۰۰'; break; }
+            if (isNaN(v2) || v2 < 0 || v2 > 100) { result = isFa ? '⚠️ درصد ۰ تا ۱۰۰' : '⚠️ Percent 0-100'; break; }
             var dc = calcDiscount(v1, v2);
             result = isFa ? dc.finalPrice.toLocaleString('fa-IR') + ' تومان' : dc.finalPrice.toLocaleString();
             break;
@@ -1022,10 +1023,10 @@ document.getElementById('btn-calc').onclick = function() {
             var persianYear = getPersianYear();
             var gregorianYear = new Date().getFullYear();
             var birthYear = v1;
-            if (isFa && (birthYear < 1000 || birthYear > persianYear)) { result = '⚠️ سال تولد معتبر نیست'; break; }
+            if (isFa && (birthYear < 1000 || birthYear > persianYear)) { result = isFa ? '⚠️ سال تولد معتبر نیست' : '⚠️ Birth year invalid'; break; }
             if (!isFa && (birthYear < 1900 || birthYear > gregorianYear)) { result = '⚠️ Birth year invalid'; break; }
             var age = isFa ? persianYear - birthYear : gregorianYear - birthYear;
-            if (age < 0 || age > 150) { result = '⚠️ سال تولد معتبر نیست'; break; }
+            if (age < 0 || age > 150) { result = isFa ? '⚠️ سال تولد معتبر نیست' : '⚠️ Birth year invalid'; break; }
             result = age + (isFa ? ' سال' : ' years');
             break;
 
@@ -1056,7 +1057,7 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'ideals':
-            if (v1 < 120 || v1 > 250) { result = '⚠️ قد ۱۲۰ تا ۲۵۰'; break; }
+            if (v1 < 120 || v1 > 250) { result = isFa ? '⚠️ قد ۱۲۰ تا ۲۵۰' : '⚠️ Height 120-250'; break; }
             result = ((v1 - 100) - ((v1 - 150) / 4)).toFixed(1) + ' kg';
             break;
 
@@ -1147,10 +1148,10 @@ document.getElementById('btn-calc').onclick = function() {
                 if (gDate) {
                     result = gDate.getFullYear() + '/' + (gDate.getMonth()+1) + '/' + gDate.getDate() + ' (' + gDate.toLocaleDateString(isFa ? 'fa-IR' : 'en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'}) + ')';
                 } else {
-                    result = '⚠️ تاریخ نامعتبر';
+                    result = isFa ? '⚠️ تاریخ نامعتبر' : '⚠️ Invalid date';
                 }
             } else {
-                result = '⚠️ فرمت: ۱۴۰۳/۰۵/۱۵';
+                result = isFa ? '⚠️ فرمت: ۱۴۰۳/۰۵/۱۵' : '⚠️ Format: 2024/08/05';
             }
             break;
 
