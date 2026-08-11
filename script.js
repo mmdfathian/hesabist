@@ -221,7 +221,7 @@ function getPersianDate() {
 
 // ─── توابع محاسبه ───────────────────────────────────────────────────────────
 function generatePassword(length) {
-    var len = Math.min(Math.max(parseInt(length) || 12, 8), 32);
+    var len = Math.min(Math.max(parseInt(length) || 12, 4), 64);
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
     var arr = new Uint8Array(len);
     crypto.getRandomValues(arr);
@@ -386,6 +386,13 @@ function updateUI() {
     document.getElementById('toolSearch').placeholder = lang.search;
     document.getElementById('lang-btn').innerText = currentLang === 'fa' ? 'English' : 'فارسی';
     document.getElementById('btn-calc').innerText = lang.calc;
+    document.getElementById('back-btn-label').innerText = lang.back;
+    document.getElementById('bar-home').innerText = isFa ? 'خانه' : 'Home';
+    document.getElementById('bar-settings').innerText = isFa ? 'تنظیمات' : 'Settings';
+    document.getElementById('settings-title').innerText = isFa ? 'تنظیمات ظاهر' : 'Appearance';
+    document.getElementById('dark-mode-label').innerText = isFa ? 'تغییر حالت شب/روز' : 'Dark/Light Mode';
+    document.getElementById('settings-close-label').innerText = isFa ? 'تایید' : 'Done';
+    document.getElementById('txt-date').innerText = isFa ? getPersianDate() : new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     var tabs = document.getElementById('tabs-container');
     tabs.innerHTML = Object.keys(lang.cats).map(function(c) {
         return '<button class="tab-btn" onclick="filterByCategory(\'' + c + '\', this)">' + lang.cats[c] + '</button>';
@@ -546,12 +553,19 @@ function openTool(id, pushState) {
         i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
         var wcUI = document.createElement('div');
         wcUI.className = 'dynamic-ui';
-        var cities = [
+        var citiesFa = [
             { name: 'تهران', tz: 'Asia/Tehran' }, { name: 'استانبول', tz: 'Europe/Istanbul' },
             { name: 'لندن', tz: 'Europe/London' }, { name: 'نیویورک', tz: 'America/New_York' },
             { name: 'توکیو', tz: 'Asia/Tokyo' }, { name: 'دубای', tz: 'Asia/Dubai' },
             { name: 'مسکو', tz: 'Europe/Moscow' }, { name: 'پاریس', tz: 'Europe/Paris' }
         ];
+        var citiesEn = [
+            { name: 'Tehran', tz: 'Asia/Tehran' }, { name: 'Istanbul', tz: 'Europe/Istanbul' },
+            { name: 'London', tz: 'Europe/London' }, { name: 'New York', tz: 'America/New_York' },
+            { name: 'Tokyo', tz: 'Asia/Tokyo' }, { name: 'Dubai', tz: 'Asia/Dubai' },
+            { name: 'Moscow', tz: 'Europe/Moscow' }, { name: 'Paris', tz: 'Europe/Paris' }
+        ];
+        var cities = currentLang === 'fa' ? citiesFa : citiesEn;
         wcUI.innerHTML = cities.map(function(c) {
             return '<div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid var(--bg);"><span>' + c.name + '</span><span id="wc-' + c.tz.replace('/','-') + '" style="font-weight:bold;"></span></div>';
         }).join('');
@@ -907,7 +921,7 @@ document.getElementById('btn-calc').onclick = function() {
                 break;
 
             case 'charConverter':
-                var arabicChars = {'أ':'ا','إ':'ا','آ':'ا','ة':'ه','ى':'ی','ؤ':'و','ئ':'ی','ء':'ا'};
+                var arabicChars = {'أ':'ا','إ':'ا','آ':'ا','ة':'ه','ى':'ی','ؤ':'و','ئ':'ی','ء':'ا','ك':'ک','ي':'ی'};
                 result = text;
                 Object.keys(arabicChars).forEach(function(k) {
                     result = result.split(k).join(arabicChars[k]);
@@ -1275,7 +1289,10 @@ function escHtml(s) {
 function searchTools() {
     var s = document.getElementById('toolSearch').value.toLowerCase();
     renderTools(toolList.filter(function(t) {
-        return dictionary[currentLang].tools[t.id].title.toLowerCase().includes(s);
+        var title = dictionary[currentLang].tools[t.id].title.toLowerCase();
+        var id = t.id.toLowerCase();
+        var cat = t.cat.toLowerCase();
+        return title.includes(s) || id.includes(s) || cat.includes(s);
     }));
 }
 

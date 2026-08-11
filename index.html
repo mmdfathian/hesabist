@@ -2,7 +2,6 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>حسابیست | HESABIST</title>
 <link rel="stylesheet" href="style.css">
@@ -74,7 +73,7 @@
 
   <section id="tool-view" style="display:none;">
     <div class="tool-nav">
-      <button class="back-btn" onclick="showHome()">← بازگشت</button>
+      <button class="back-btn" id="back-btn-label" onclick="showHome()">← بازگشت</button>
       <h2 id="tool-title">عنوان ابزار</h2>
     </div>
     <div class="calc-container">
@@ -92,23 +91,23 @@
   </section>
 
   <nav class="bottom-bar">
-    <button onclick="showHome()">خانه</button>
-    <button onclick="toggleSettings()">تنظیمات</button>
+    <button id="bar-home" onclick="showHome()">خانه</button>
+    <button id="bar-settings" onclick="toggleSettings()">تنظیمات</button>
     <button id="lang-btn" onclick="changeLanguage()">English</button>
   </nav>
 </div>
 
 <div id="settings-modal" onclick="toggleSettings()">
   <div class="settings-content" onclick="event.stopPropagation()">
-    <h3>تنظیمات ظاهر</h3>
+    <h3 id="settings-title">تنظیمات ظاهر</h3>
     <div class="theme-dots">
       <div class="dot blue" onclick="applyTheme('blue')"></div>
       <div class="dot purple" onclick="applyTheme('purple')"></div>
       <div class="dot orange" onclick="applyTheme('orange')"></div>
       <div class="dot green" onclick="applyTheme('green')"></div>
     </div>
-    <button class="dark-mode-btn" onclick="handleDarkMode()">تغییر حالت شب/روز</button>
-    <button class="close-modal-btn" onclick="toggleSettings()">تایید</button>
+    <button class="dark-mode-btn" id="dark-mode-label" onclick="handleDarkMode()">تغییر حالت شب/روز</button>
+    <button class="close-modal-btn" id="settings-close-label" onclick="toggleSettings()">تایید</button>
   </div>
 </div>
 
