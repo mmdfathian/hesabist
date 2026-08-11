@@ -486,7 +486,7 @@ function openTool(id, pushState) {
     }
 
     // ─── ابزارهای متنی: textarea ───
-    var textareaTools = ['base64','textAnalyzer','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
+    var textareaTools = ['base64','textAnalyzer','diffChecker','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
     if (textareaTools.indexOf(id) !== -1) {
         i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
         var ta = document.createElement('textarea');
@@ -543,8 +543,8 @@ function openTool(id, pushState) {
         i1.style.display = 'none'; i2.style.display = 'none'; i3.style.display = 'none';
         var breathUI = document.createElement('div');
         breathUI.className = 'dynamic-ui';
-        breathUI.innerHTML = '<div id="breath-circle" style="width:150px;height:150px;border-radius:50%;background:var(--primary);margin:20px auto;transition:transform 4s ease-in-out;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:bold;">آماده</div>' +
-            '<div style="text-align:center;"><button onclick="startBreathing()" style="padding:12px 30px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:1rem;cursor:pointer;">شروع</button></div>';
+        breathUI.innerHTML = '<div id="breath-circle" style="width:150px;height:150px;border-radius:50%;background:var(--primary);margin:20px auto;transition:transform 4s ease-in-out;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:bold;">' + (isFa ? 'آماده' : 'Ready') + '</div>' +
+            '<div style="text-align:center;"><button onclick="startBreathing()" style="padding:12px 30px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:1rem;cursor:pointer;">' + (isFa ? 'شروع' : 'Start') + '</button></div>';
         inputsGroup.appendChild(breathUI);
         document.getElementById('btn-calc').style.display = 'none';
     }
@@ -837,7 +837,7 @@ document.getElementById('btn-calc').onclick = function() {
     var isFa = currentLang === 'fa';
 
     // ابزارهای متنی
-    var textareaTools = ['base64','textAnalyzer','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
+    var textareaTools = ['base64','textAnalyzer','diffChecker','codeBeautifier','codeMinifier','jsonFormatter','listSorter','charConverter','notepad','bulkUrl'];
     if (textareaTools.indexOf(currentToolId) !== -1) {
         var ta = document.getElementById('dynamic-textarea');
         var text = ta ? ta.value : '';
