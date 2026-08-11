@@ -16,6 +16,11 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="مساحت دایره آنلاین رایگان | حسابیست">
 <meta name="twitter:description" content="محاسبه مساحت دایره">
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -32,20 +37,133 @@
   }
 }
 </script>
+<style>
+.dynamic-select {
+    width: 100%; padding: 18px; border-radius: 15px;
+    border: 2px solid var(--bg); background: var(--bg);
+    color: var(--text); font-size: 1.1rem; margin-bottom: 15px;
+    outline: none; transition: border-color 0.3s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 16px center;
+    cursor: pointer;
+}
+.dynamic-select:focus { border-color: var(--primary); }
+.dark-mode .dynamic-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='2' fill='none'/%3E%3C/svg%3E"); }
+.dynamic-select option { background: var(--bg); color: var(--text); padding: 10px; }
+.related-bar { padding: 20px; text-align: center; border-top: 1px solid var(--bg); margin-top: 20px; }
+.related-bar a { display: inline-block; padding: 8px 16px; margin: 4px; background: var(--card); border-radius: 20px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--bg); }
+</style>
 </head>
-<body>
-<div style="text-align:center;padding:40px 20px;font-family:system-ui;">
-  <h1>مساحت دایره</h1>
-  <p style="opacity:0.7;">محاسبه مساحت دایره</p>
-  <p style="margin-top:20px;"><a href="https://hesabist-app.ir/?tool=circle" style="color:#0984e3;font-weight:bold;">باز کردن ابزار →</a></p>
-  <hr style="margin:30px auto;max-width:400px;border:none;border-top:1px solid #eee;">
-  <p style="opacity:0.5;font-size:0.9rem;">ابزارهای مرتبط:</p>
-  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
-        <a href="https://hesabist-app.ir/math.html" style="padding:8px 16px;background:#f5f6fa;border-radius:20px;text-decoration:none;color:#333;font-size:0.85rem;">درصدگیری</a>
-    <a href="https://hesabist-app.ir/square.html" style="padding:8px 16px;background:#f5f6fa;border-radius:20px;text-decoration:none;color:#333;font-size:0.85rem;">توان دوم</a>
+<body class="theme-blue">
 
+<div id="splash-screen">
+  <div class="splash-content">
+    <div class="mohix-logo-premium">
+      <div class="logo-wrapper">
+        <span class="logo-fa">حسابیست</span>
+        <span class="logo-en">HESABIST</span>
+      </div>
+    </div>
+    <h1 class="splash-title">MOHIX COMPANY</h1>
+    <div class="loader-track"><div class="loader-fill"></div></div>
   </div>
-  <p style="margin-top:40px;opacity:0.3;font-size:0.8rem;">حسابیست — MOHIX COMPANY</p>
 </div>
+
+<div id="app-wrapper" style="display: none; opacity: 0; transition: opacity 0.5s;">
+  <header>
+    <div class="header-main">
+      <div class="mohix-badge">H</div>
+      <div class="brand-info">
+        <h1>حسابیست</h1>
+        <span>HESABIST</span>
+      </div>
+    </div>
+    <div class="engine-label">MOHIX SMART ENGINE</div>
+    <div class="header-clock">
+      <span id="txt-clock">00:00:00</span>
+      <span id="txt-date">Loading...</span>
+    </div>
+  </header>
+
+  <main id="home-view" style="display:none;">
+    <div class="search-box">
+      <input type="text" id="toolSearch" onkeyup="searchTools()" placeholder="جستجو میان ابزارها...">
+    </div>
+    <div id="tabs-container" class="tabs-list"></div>
+    <div id="tools-grid" class="tools-grid"></div>
+  </main>
+
+  <section id="tool-view" style="display:block;">
+    <div class="tool-nav">
+      <button class="back-btn" id="back-btn-label" onclick="showHome()">← بازگشت</button>
+      <h2 id="tool-title">مساحت دایره</h2>
+    </div>
+    <div class="calc-container">
+      <div class="inputs-group">
+        <input type="text" id="inp1" inputmode="text">
+        <input type="text" id="inp2" style="display:none;">
+        <input type="text" id="inp3" style="display:none;">
+      </div>
+      <button id="btn-calc" class="calc-action-btn">محاسبه نهایی</button>
+      <div class="result-display">
+        <span id="res-val"></span>
+        <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
+      </div>
+    </div>
+    <div class="related-bar">
+      <p style="opacity:0.5;font-size:0.85rem;margin-bottom:8px;">ابزارهای مرتبط:</p>
+            <a href="/math.html">درصدگیری</a>
+      <a href="/square.html">توان دوم</a>
+
+    </div>
+  </section>
+
+  <nav class="bottom-bar">
+    <button id="bar-home" onclick="showHome()">خانه</button>
+    <button id="bar-settings" onclick="toggleSettings()">تنظیمات</button>
+    <button id="lang-btn" onclick="changeLanguage()">English</button>
+  </nav>
+</div>
+
+<div id="settings-modal" onclick="toggleSettings()">
+  <div class="settings-content" onclick="event.stopPropagation()">
+    <h3 id="settings-title">تنظیمات ظاهر</h3>
+    <div class="theme-dots">
+      <div class="dot blue" onclick="applyTheme('blue')"></div>
+      <div class="dot purple" onclick="applyTheme('purple')"></div>
+      <div class="dot orange" onclick="applyTheme('orange')"></div>
+      <div class="dot green" onclick="applyTheme('green')"></div>
+    </div>
+    <button class="dark-mode-btn" id="dark-mode-label" onclick="handleDarkMode()">تغییر حالت شب/روز</button>
+    <button class="close-modal-btn" id="settings-close-label" onclick="toggleSettings()">تایید</button>
+  </div>
+</div>
+
+<script src="script.js?v=3.0"></script>
+<script>
+// Auto-open this tool directly
+window.addEventListener('load', function() {
+    var isDark = localStorage.getItem('hesabist_dark') === 'true';
+    if (isDark) document.body.classList.add('dark-mode');
+    applyTheme(localStorage.getItem('hesabist_theme') || 'blue');
+    fetchCurrencyRates();
+    updateUI();
+    setInterval(tickClock, 1000);
+    tickClock();
+    setTimeout(function() {
+        var splash = document.getElementById('splash-screen');
+        var wrapper = document.getElementById('app-wrapper');
+        splash.style.transition = 'opacity 0.5s ease';
+        splash.style.opacity = '0';
+        wrapper.style.display = 'block';
+        setTimeout(function() {
+            wrapper.style.opacity = '1';
+            splash.style.display = 'none';
+            openTool('circle', false);
+        }, 500);
+    }, 900);
+});
+</script>
 </body>
 </html>
