@@ -14,7 +14,7 @@ const dictionary = {
             discount: { title: "تخفیف", p1: "قیمت کل", p2: "درصد تخفیف" },
             age:      { title: "محاسبه سن", p1: "سال تولد شمسی" },
             water:    { title: "نیاز به آب", p1: "وزن (کیلو)" },
-            pass:     { title: "پسورد ساز", p1: "تعداد کاراکتر (۸ تا ۳۲)" },
+            pass:     { title: "پسورد ساز", p1: "تعداد کاراکتر (۴ تا ۶۴)" },
             unit:     { title: "سانت به اینچ", p1: "سانتی‌متر" },
             circle:   { title: "مساحت دایره", p1: "شعاع" },
             temp:     { title: "دما (C به F)", p1: "درجه سانتی‌گراد" },
@@ -70,7 +70,7 @@ const dictionary = {
             discount: { title: "Discount", p1: "Price", p2: "Percent" },
             age:      { title: "Age Calc", p1: "Birth Year" },
             water:    { title: "Water Needs", p1: "Weight (kg)" },
-            pass:     { title: "Password Gen", p1: "Length (8-32)" },
+            pass:     { title: "Password Gen", p1: "Length (4-64)" },
             unit:     { title: "CM to Inch", p1: "CM" },
             circle:   { title: "Circle Area", p1: "Radius" },
             temp:     { title: "Celsius to F", p1: "Celsius" },
@@ -521,7 +521,7 @@ function openTool(id, pushState) {
         counterUI.innerHTML = '<div style="text-align:center;font-size:3rem;font-weight:bold;padding:20px;" id="counter-val">0</div>' +
             '<div style="display:flex;gap:10px;justify-content:center;">' +
             '<button onclick="counterChange(-1)" style="padding:15px 30px;border-radius:12px;border:none;background:#e74c3c;color:#fff;font-size:1.5rem;cursor:pointer;">−</button>' +
-            '<button onclick="counterChange(0)" style="padding:15px 30px;border-radius:12px;border:none;background:#95a5a6;color:#fff;font-size:1rem;cursor:pointer;">پاک</button>' +
+            '<button onclick="counterChange(0)" style="padding:15px 30px;border-radius:12px;border:none;background:#95a5a6;color:#fff;font-size:1rem;cursor:pointer;">' + (currentLang === 'fa' ? 'پاک' : 'Clear') + '</button>' +
             '<button onclick="counterChange(1)" style="padding:15px 30px;border-radius:12px;border:none;background:#27ae60;color:#fff;font-size:1.5rem;cursor:pointer;">+</button>' +
             '</div>';
         inputsGroup.appendChild(counterUI);
@@ -595,13 +595,13 @@ function openTool(id, pushState) {
         var ipUI = document.createElement('div');
         ipUI.className = 'dynamic-ui';
         ipUI.id = 'ip-result';
-        ipUI.innerHTML = '<div style="text-align:center;padding:20px;">در حال دریافت...</div>';
+        ipUI.innerHTML = '<div style="text-align:center;padding:20px;">' + (isFa ? 'در حال دریافت...' : 'Loading...') + '</div>';
         inputsGroup.appendChild(ipUI);
         document.getElementById('btn-calc').style.display = 'none';
         fetch('https://api.ipify.org?format=json').then(function(r) { return r.json(); }).then(function(d) {
             document.getElementById('ip-result').textContent = d.ip;
         }).catch(function() {
-            document.getElementById('ip-result').innerHTML = '<div style="text-align:center;color:red;">خطا در دریافت</div>';
+            document.getElementById('ip-result').innerHTML = '<div style="text-align:center;color:red;">' + (isFa ? 'خطا در دریافت' : 'Error') + '</div>';
         });
     }
 
@@ -689,11 +689,12 @@ function startBreathing() {
     _breathRunning = true;
     var circle = document.getElementById('breath-circle');
     if (!circle) { _breathRunning = false; return; }
+    var isFa = currentLang === 'fa';
     var phases = [
-        { text: 'دم', transform: 'scale(1.5)', dur: 4000 },
-        { text: 'نگه‌دار', transform: 'scale(1.5)', dur: 4000 },
-        { text: 'بازدم', transform: 'scale(1)', dur: 4000 },
-        { text: 'نگه‌دار', transform: 'scale(1)', dur: 2000 }
+        { text: isFa ? 'دم' : 'Inhale', transform: 'scale(1.5)', dur: 4000 },
+        { text: isFa ? 'نگه‌دار' : 'Hold', transform: 'scale(1.5)', dur: 4000 },
+        { text: isFa ? 'بازدم' : 'Exhale', transform: 'scale(1)', dur: 4000 },
+        { text: isFa ? 'نگه‌دار' : 'Hold', transform: 'scale(1)', dur: 2000 }
     ];
     var i = 0;
     function nextPhase() {
@@ -714,7 +715,7 @@ function updateWorldClock() {
     cities.forEach(function(tz) {
         var el = document.getElementById('wc-' + tz.replace('/','-'));
         if (el) {
-            try { el.innerText = new Date().toLocaleTimeString(isFa ? 'fa-IR' : 'en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+            try { el.innerText = new Date().toLocaleTimeString(currentLang === 'fa' ? 'fa-IR' : 'en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
             catch(e) { el.innerText = '--:--'; }
         }
     });
@@ -1105,7 +1106,7 @@ document.getElementById('btn-calc').onclick = function() {
 
         case 'timestampConv':
             var ts = v1;
-            if (ts > 1e12) ts = ts; // already milliseconds
+            if (ts > 1e12) { /* already milliseconds */ }
             else if (ts > 1e9) ts = ts * 1000; // seconds to ms
             else {
                 // Try parsing as date
