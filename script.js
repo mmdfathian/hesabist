@@ -229,37 +229,37 @@ function generatePassword(length) {
 }
 
 function calcLoan(principal, annualRate, months) {
-    if (principal <= 0 || annualRate < 0 || months <= 0) return { error: 'مقادیر نامعتبر' };
+    if (principal <= 0 || annualRate < 0 || months <= 0) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     if (annualRate === 0) return Math.round(principal / months);
     var r = annualRate / 100 / 12;
     return Math.round(principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1));
 }
 
 function calcBMI(w, h) {
-    if (w <= 0 || h <= 0) return { error: 'مقادیر نامعتبر' };
+    if (w <= 0 || h <= 0) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     var bmi = w / ((h / 100) * (h / 100));
-    var cat = bmi < 18.5 ? 'کمبود وزن' : bmi < 25 ? 'نرمال' : bmi < 30 ? 'اضافه وزن' : 'چاق';
+    var cat = bmi < 18.5 ? (currentLang === 'fa' ? 'کمبود وزن' : 'Underweight') : bmi < 25 ? (currentLang === 'fa' ? 'نرمال' : 'Normal') : bmi < 30 ? (currentLang === 'fa' ? 'اضافه وزن' : 'Overweight') : (currentLang === 'fa' ? 'چاق' : 'Obese');
     return { bmi: Math.round(bmi * 10) / 10, category: cat };
 }
 
 function calcDiscount(price, pct) {
-    if (price <= 0 || pct < 0 || pct > 100) return { error: 'مقادیر نامعتبر' };
+    if (price <= 0 || pct < 0 || pct > 100) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     return { discount: Math.round(price * pct / 100), finalPrice: Math.round(price - price * pct / 100) };
 }
 
 function calcDollar(amount, rate) {
-    if (amount <= 0 || rate <= 0) return { error: 'مقادیر نامعتبر' };
+    if (amount <= 0 || rate <= 0) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     return { dollar: Math.round(amount / rate * 100) / 100, formatted: (amount / rate).toFixed(2) + ' $' };
 }
 
 function calcCurrency(amount, fromRate, toRate) {
-    if (amount <= 0 || fromRate <= 0 || toRate <= 0) return { error: 'مقادیر نامعتبر' };
+    if (amount <= 0 || fromRate <= 0 || toRate <= 0) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     var result = (amount * fromRate) / toRate;
     return { result: Math.round(result * 100) / 100, formatted: result.toFixed(2) };
 }
 
 function calcCalorie(weight, duration, activityType) {
-    if (weight <= 0 || duration <= 0) return { error: 'مقادیر نامعتبر' };
+    if (weight <= 0 || duration <= 0) return { error: currentLang === 'fa' ? 'مقادیر نامعتبر' : 'Invalid values' };
     var met = { walking: 3.5, running: 8, cycling: 6, swimming: 7, yoga: 2.5, gym: 5, default: 4 };
     var m = met[activityType] || met.default;
     return { calories: Math.round(m * weight * duration / 60), met: m };
@@ -282,7 +282,7 @@ function convertUnit(value, type) {
         'kg-g': v => (v * 1000).toFixed(0) + ' g',
         'g-kg': v => (v / 1000).toFixed(3) + ' kg'
     };
-    return c[type] ? c[type](value) : 'نامعتبر';
+    return c[type] ? c[type](value) : (currentLang === 'fa' ? 'نامعتبر' : 'Invalid');
 }
 
 // ─── QR Code (real QR using qrcode-generator library) ───────────────────────
@@ -906,7 +906,7 @@ document.getElementById('btn-calc').onclick = function() {
             case 'jsonFormatter':
                 try {
                     result = JSON.stringify(JSON.parse(text), null, 2);
-                } catch(e) { result = '⚠️ JSON نامعتبر: ' + e.message; }
+                } catch(e) { result = '⚠️ ' + (isFa ? 'JSON نامعتبر: ' : 'Invalid JSON: ') + e.message; }
                 break;
 
             case 'listSorter':
@@ -916,7 +916,7 @@ document.getElementById('btn-calc').onclick = function() {
                 if (sortType === 'num') {
                     listLines.sort(function(a,b){ return parseFloat(a) - parseFloat(b); });
                 } else {
-                    listLines.sort(function(a,b){ return a.localeCompare(b, 'fa'); });
+                    listLines.sort(function(a,b){ return a.localeCompare(b, currentLang === 'fa' ? 'fa' : 'en'); });
                 }
                 result = listLines.join('\n');
                 break;
