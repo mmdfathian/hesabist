@@ -287,7 +287,13 @@ function convertUnit(value, type) {
 
 // ─── QR Code (real QR using qrcode-generator library) ───────────────────────
 function generateQR(text) {
-    if (!text || typeof qrcode === 'undefined') return '';
+    if (!text) return '';
+    
+    // Wait for qrcode library to load
+    if (typeof qrcode === 'undefined') {
+        // Try to load it dynamically if not loaded
+        return '';
+    }
     try {
         var qr = qrcode(0, 'M');
         qr.addData(text);
@@ -313,6 +319,21 @@ function generateQR(text) {
     } catch(e) { return ''; }
 }
 
+// Helper to ensure qrcode is loaded
+function ensureQRCodeLoaded() {
+    return new Promise(function(resolve) {
+        if (typeof qrcode !== 'undefined') {
+            resolve();
+        } else {
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+            script.onload = resolve;
+            script.onerror = function() { console.warn('QR library failed to load'); resolve(); };
+            document.head.appendChild(script);
+        }
+    });
+}
+
 // ─── فعالیت‌ها ───────────────────────────────────────────────────────────────
 
 // ─── بروزرسانی نرخ ارز از API ──────────────────────────────────────────────
@@ -321,14 +342,18 @@ function fetchCurrencyRates() {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data && data.rates) {
-                if (data.rates.IRR) currencyData.USD.rate = Math.round(data.rates.IRR / 10); // IRR to Toman
-                if (data.rates.EUR) currencyData.EUR.rate = Math.round(data.rates.IRR / data.rates.EUR / 10);
-                if (data.rates.GBP) currencyData.GBP.rate = Math.round(data.rates.IRR / data.rates.GBP / 10);
-                if (data.rates.AED) currencyData.AED.rate = Math.round(data.rates.IRR / data.rates.AED / 10);
-                if (data.rates.TRY) currencyData.TRY.rate = Math.round(data.rates.IRR / data.rates.TRY / 10);
-                if (data.rates.CNY) currencyData.CNY.rate = Math.round(data.rates.IRR / data.rates.CNY / 10);
-                if (data.rates.RUB) currencyData.RUB.rate = Math.round(data.rates.IRR / data.rates.RUB / 10);
-                if (data.rates.SAR) currencyData.SAR.rate = Math.round(data.rates.IRR / data.rates.SAR / 10);
+                var irr = data.rates.IRR || 500000;
+                // open.er-api.com returns rates where 1 USD = X currency
+                // So USD rate = IRR per USD / 10 (to get Tomans per USD)
+                // EUR rate = (IRR per USD) / (EUR per USD) / 10 = Tomans per EUR
+                if (irr) currencyData.USD.rate = Math.round(irr / 10); // IRR to Toman
+                if (data.rates.EUR) currencyData.EUR.rate = Math.round(irr / data.rates.EUR / 10);
+                if (data.rates.GBP) currencyData.GBP.rate = Math.round(irr / data.rates.GBP / 10);
+                if (data.rates.AED) currencyData.AED.rate = Math.round(irr / data.rates.AED / 10);
+                if (data.rates.TRY) currencyData.TRY.rate = Math.round(irr / data.rates.TRY / 10);
+                if (data.rates.CNY) currencyData.CNY.rate = Math.round(irr / data.rates.CNY / 10);
+                if (data.rates.RUB) currencyData.RUB.rate = Math.round(irr / data.rates.RUB / 10);
+                if (data.rates.SAR) currencyData.SAR.rate = Math.round(irr / data.rates.SAR / 10);
                 console.log('Currency rates updated from API');
             }
         })
@@ -495,6 +520,13 @@ function openTool(id, pushState) {
         ta.rows = id === 'notepad' ? 12 : 6;
         ta.style.cssText = 'width:100%;padding:14px;border-radius:12px;border:2px solid var(--bg);background:var(--bg);color:var(--text);font-size:1rem;font-family:monospace;resize:vertical;margin-bottom:12px;';
         inputsGroup.appendChild(ta);
+        
+        // Load saved notepad content on open
+        if (id === 'notepad') {
+            var saved = localStorage.getItem('hesabist_notepad');
+            if (saved) ta.value = saved;
+        }
+        
         if (id === 'diffChecker') {
             var ta2 = document.createElement('textarea');
             ta2.id = 'dynamic-textarea2'; ta2.className = 'dynamic-ui';
@@ -534,6 +566,9 @@ function openTool(id, pushState) {
             '</div>';
         inputsGroup.appendChild(counterUI);
         document.getElementById('btn-calc').style.display = 'none';
+        
+        // Reset counter when opening tool
+        _counterVal = 0;
     } else {
         document.getElementById('btn-calc').style.display = '';
     }
@@ -663,13 +698,34 @@ function showHome(pushState) {
     document.getElementById('tool-view').style.display = 'none';
     document.getElementById('home-view').style.display = 'block';
     document.title = 'حسابیست | HESABIST';
+    
+    // Clean up worldClock interval
+    if (window._wcInterval) {
+        clearInterval(window._wcInterval);
+        window._wcInterval = null;
+    }
+    
+    // Clean up breathing timeout
+    if (_breathRunning) {
+        _breathRunning = false;
+        if (_breathTimeout) {
+            clearTimeout(_breathTimeout);
+            _breathTimeout = null;
+        }
+    }
 }
 
 function changeLanguage() {
     currentLang = currentLang === 'fa' ? 'en' : 'fa';
     document.documentElement.lang = currentLang === 'fa' ? 'fa' : 'en';
     document.body.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
-    updateUI(); tickClock();
+    updateUI(); 
+    tickClock();
+    
+    // If a tool is currently open, re-open it to refresh dynamic dropdowns
+    if (currentToolId) {
+        openTool(currentToolId, false);
+    }
 }
 
 function toggleSettings() {
@@ -699,8 +755,16 @@ function counterChange(d) {
 
 // ─── Breathing ──────────────────────────────────────────────────────────────
 var _breathRunning = false;
+var _breathTimeout = null;
 function startBreathing() {
-    if (_breathRunning) return;
+    // Clean up any previous running state
+    if (_breathRunning) {
+        _breathRunning = false;
+        if (_breathTimeout) {
+            clearTimeout(_breathTimeout);
+            _breathTimeout = null;
+        }
+    }
     _breathRunning = true;
     var circle = document.getElementById('breath-circle');
     if (!circle) { _breathRunning = false; return; }
@@ -714,14 +778,16 @@ function startBreathing() {
     var i = 0;
     function nextPhase() {
         if (!_breathRunning) return;
+        var circle = document.getElementById('breath-circle');
+        if (!circle) { _breathRunning = false; return; }
         var p = phases[i % phases.length];
         circle.innerText = p.text;
         circle.style.transform = p.transform;
         i++;
-        setTimeout(nextPhase, p.dur);
+        _breathTimeout = setTimeout(nextPhase, p.dur);
     }
     nextPhase();
-    setTimeout(function() { _breathRunning = false; }, 60000);
+    _breathTimeout = setTimeout(function() { _breathRunning = false; _breathTimeout = null; }, 60000);
 }
 
 // ─── World Clock ────────────────────────────────────────────────────────────
@@ -848,10 +914,29 @@ document.getElementById('btn-calc').onclick = function() {
         switch(currentToolId) {
             case 'base64':
                 try {
-                    if (/^[A-Za-z0-9+/=]+$/.test(text.trim()) && text.trim().length > 0 && !text.includes('\n') && text.trim().length % 4 === 0) {
-                        result = atob(text.trim());
+                    var trimmed = text.trim();
+                    if (!trimmed) { result = isFa ? '⚠️ متن وارد کنید' : '⚠️ Enter text'; break; }
+                    
+                    // Better base64 detection:
+                    // 1. Only base64 chars
+                    // 2. Length multiple of 4
+                    // 3. No newlines (or just ignore them)
+                    // 4. At least 4 chars
+                    var isBase64 = /^[A-Za-z0-9+/=]+$/.test(trimmed.replace(/\s/g, '')) && 
+                                   trimmed.replace(/\s/g, '').length % 4 === 0 &&
+                                   trimmed.replace(/\s/g, '').length >= 4;
+                    
+                    if (isBase64) {
+                        // Try decode
+                        try {
+                            result = atob(trimmed.replace(/\s/g, ''));
+                        } catch(e) {
+                            // If decode fails, encode instead
+                            result = btoa(unescape(encodeURIComponent(trimmed)));
+                        }
                     } else {
-                        result = btoa(unescape(encodeURIComponent(text)));
+                        // Encode
+                        result = btoa(unescape(encodeURIComponent(trimmed)));
                     }
                 } catch(e) { result = '⚠️ ' + (isFa ? 'خطا در رمزگذاری' : 'Encoding error'); }
                 break;
@@ -932,26 +1017,25 @@ document.getElementById('btn-calc').onclick = function() {
                 break;
 
             case 'notepad':
-                if (!text && localStorage.getItem('hesabist_notepad')) {
-                    document.getElementById('dynamic-textarea').value = localStorage.getItem('hesabist_notepad');
-                    result = isFa ? '📥 یادداشت قبلی بارگذاری شد' : '📥 Previous notes loaded';
-                } else {
-                    localStorage.setItem('hesabist_notepad', text);
-                    result = isFa ? '✅ ذخیره شد (' + text.length + ' کاراکتر)' : '✅ Saved (' + text.length + ' chars)';
-                }
+                var text = document.getElementById('dynamic-textarea').value;
+                if (!text) { result = isFa ? '⚠️ متن وارد کنید' : '⚠️ Enter text'; break; }
+                localStorage.setItem('hesabist_notepad', text);
+                result = isFa ? '✅ ذخیره شد (' + text.length + ' کاراکتر)' : '✅ Saved (' + text.length + ' chars)';
                 break;
 
             case 'bulkUrl':
                 var urls = text.split('\n').map(function(u){ return u.trim(); }).filter(function(u){ return u; });
-                var opened = 0;
-                urls.forEach(function(url, idx) {
+                if (urls.length === 0) { result = isFa ? '⚠️ لینک وارد کنید' : '⚠️ Enter URLs'; break; }
+                
+                // Instead of auto-opening (blocked by popup blockers), create clickable links
+                var linksHtml = urls.map(function(url, idx) {
                     if (!url.startsWith('http')) url = 'https://' + url;
-                    setTimeout(function() {
-                        try { window.open(url, '_blank'); } catch(e) {}
-                    }, idx * 300);
-                    opened++;
-                });
-                result = isFa ? '✅ ' + opened + ' لینک باز شد (با تاخیر)' : '✅ ' + opened + ' links opening...';
+                    return '<a href="' + escHtml(url) + '" target="_blank" rel="noopener noreferrer" style="display:block;padding:8px 12px;margin:4px 0;background:var(--bg);border-radius:8px;color:var(--primary);text-decoration:none;border:1px solid var(--border);transition:all 0.2s;" onmouseover="this.style.background=\'var(--primary)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'var(--bg)\';this.style.color=\'var(--primary)\'">' + (idx + 1) + '. ' + escHtml(url) + '</a>';
+                }).join('');
+                
+                resultEl.innerHTML = '<div style="max-height:300px;overflow-y:auto;">' + linksHtml + '</div>';
+                result = isFa ? '✅ ' + urls.length + ' لینک آماده است (روی هرکدام کلیک کنید)' : '✅ ' + urls.length + ' links ready (click to open)';
+                copyBtn.style.display = 'none';
                 break;
         }
         resEl.innerText = result;
@@ -1120,18 +1204,43 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'timestampConv':
-            var ts = v1;
-            if (ts > 1e12) { /* already milliseconds */ }
-            else if (ts > 1e9) ts = ts * 1000; // seconds to ms
-            else {
-                // Try parsing as date
-                var d = new Date(document.getElementById('inp1').value);
+            var input = document.getElementById('inp1').value.trim();
+            if (!input) { result = '⚠️'; break; }
+            
+            var ts, d;
+            
+            // Try to parse as a number first (timestamp)
+            var num = parseFloat(input);
+            if (!isNaN(num) && input.match(/^[\d.]+$/)) {
+                // It's a number - detect if seconds or milliseconds
+                if (num > 1e12) {
+                    // Already milliseconds
+                    ts = num;
+                } else if (num > 1e9) {
+                    // Seconds since epoch
+                    ts = num * 1000;
+                } else {
+                    // Too small to be a valid timestamp, treat as date string
+                    d = new Date(input);
+                    if (!isNaN(d.getTime())) {
+                        result = Math.floor(d.getTime() / 1000) + ' (Unix) | ' + d.toISOString();
+                        break;
+                    }
+                    result = isFa ? '⚠️ تایم‌استمپ نامعتبر' : '⚠️ Invalid timestamp';
+                    break;
+                }
+            } else {
+                // Try parsing as date string
+                d = new Date(input);
                 if (!isNaN(d.getTime())) {
                     result = Math.floor(d.getTime() / 1000) + ' (Unix) | ' + d.toISOString();
                     break;
                 }
+                result = isFa ? '⚠️ فرمت نامعتبر' : '⚠️ Invalid format';
+                break;
             }
-            var d = new Date(ts);
+            
+            d = new Date(ts);
             if (isNaN(d.getTime())) { result = '⚠️'; break; }
             result = d.toLocaleString(isFa ? 'fa-IR' : 'en-US') + ' | Unix: ' + Math.floor(d.getTime() / 1000);
             break;
@@ -1156,18 +1265,32 @@ document.getElementById('btn-calc').onclick = function() {
             break;
 
         case 'cssGen':
-            if (isNaN(v3)) v3 = 12;
-            var bg = document.getElementById('inp1').value || '#fff';
-            var col = document.getElementById('inp2') && document.getElementById('inp2').value ? document.getElementById('inp2').value : '#333';
-            result = 'background: ' + bg + ';\ncolor: ' + col + ';\nborder-radius: ' + v3 + 'px;\npadding: 16px;';
-            break;
+                    if (isNaN(v3)) v3 = 12;
+                    // Validate and sanitize CSS values
+                    var bg = document.getElementById('inp1').value || '#fff';
+                    var col = document.getElementById('inp2') && document.getElementById('inp2').value ? document.getElementById('inp2').value : '#333';
+                    // Basic CSS color validation
+                    var colorRegex = /^(#[0-9a-fA-F]{3,8}|rgb\(|rgba\(|hsl\(|hsla\(|[a-zA-Z]+)$/;
+                    if (!colorRegex.test(bg)) bg = '#fff';
+                    if (!colorRegex.test(col)) col = '#333';
+                    result = 'background: ' + bg + ';\\ncolor: ' + col + ';\\nborder-radius: ' + v3 + 'px;\\npadding: 16px;';
+                    break;
 
-        case 'robotsGen':
-            var domain = document.getElementById('inp1').value.trim();
-            if (!domain) { result = '⚠️'; break; }
-            if (!domain.startsWith('http')) domain = 'https://' + domain;
-            result = 'User-agent: *\nAllow: /\nSitemap: ' + domain + '/sitemap.xml';
-            break;
+                case 'robotsGen':
+                    var domain = document.getElementById('inp1').value.trim();
+                    if (!domain) { result = '⚠️'; break; }
+                    if (!domain.startsWith('http')) domain = 'https://' + domain;
+                    // Validate domain format
+                    var url;
+                    try {
+                        url = new URL(domain);
+                        domain = url.origin; // Get just the origin (protocol + host)
+                    } catch(e) {
+                        result = isFa ? '⚠️ آدرس نامعتبر' : '⚠️ Invalid URL';
+                        break;
+                    }
+                    result = 'User-agent: *\\nAllow: /\\nSitemap: ' + domain + '/sitemap.xml';
+                    break;
 
         case 'seoGen':
             var title = escHtml(document.getElementById('inp1').value);
@@ -1195,9 +1318,17 @@ document.getElementById('btn-calc').onclick = function() {
         case 'qrGen':
             var text = document.getElementById('inp1').value;
             if (!text) { result = '⚠️'; break; }
-            var dataUrl = generateQR(text);
-            resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;">';
-            copyBtn.style.display = 'none';
+            
+            // Ensure QR library is loaded
+            ensureQRCodeLoaded().then(function() {
+                var dataUrl = generateQR(text);
+                if (dataUrl) {
+                    resultEl.innerHTML = '<img src="' + dataUrl + '" style="max-width:200px;margin:10px auto;display:block;border-radius:8px;">';
+                } else {
+                    resultEl.innerText = isFa ? '⚠️ کتابخانه QR لود نشد' : '⚠️ QR library not loaded';
+                }
+                copyBtn.style.display = 'none';
+            });
             return;
 
         case 'imgConvert':
@@ -1256,10 +1387,24 @@ document.getElementById('btn-calc').onclick = function() {
 
 // ─── تبدیل تاریخ شمسی به میلادی (ساده) ─────────────────────────────────────
 function jalaliToGregorian(jy, jm, jd) {
+    // Validate inputs
+    if (isNaN(jy) || isNaN(jm) || isNaN(jd)) return null;
+    if (jm < 1 || jm > 12) return null;
+    
+    // Days in each jalali month
+    var monthDays = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+    // Leap year: last month has 30 days
+    var isLeap = [1,5,9,13,17,22,26,30].indexOf(jy % 33) !== -1;
+    if (isLeap) monthDays[11] = 30;
+    
+    if (jd < 1 || jd > monthDays[jm - 1]) return null;
+    
+    // Reference: 1 Farvardin 1397 = 21 March 2018
     var jy_ref = 1397;
     var g_year = 2018, g_month = 3, g_day = 21;
     var days = 0;
     var yDiff = jy - jy_ref;
+    
     if (yDiff >= 0) {
         for (var y = 0; y < yDiff; y++) {
             var cyc = (jy_ref + y) % 33;
@@ -1271,10 +1416,12 @@ function jalaliToGregorian(jy, jm, jd) {
             days -= [1,5,9,13,17,22,26,30].indexOf(cyc) !== -1 ? 366 : 365;
         }
     }
+    
     for (var m = 1; m < jm; m++) {
-        days += m <= 6 ? 31 : m <= 11 ? 30 : ([1,5,9,13,17,22,26,30].indexOf(jy % 33) !== -1 ? 30 : 29);
+        days += m <= 6 ? 31 : m <= 11 ? 30 : (isLeap ? 30 : 29);
     }
     days += jd - 1;
+    
     var result = new Date(g_year, g_month - 1, g_day);
     result.setDate(result.getDate() + days);
     return result;
@@ -1287,14 +1434,19 @@ function escHtml(s) {
     return d.innerHTML;
 }
 
+// ─── Search with Debounce ──────────────────────────────────────────────────
+var _searchDebounce = null;
 function searchTools() {
-    var s = document.getElementById('toolSearch').value.toLowerCase();
-    renderTools(toolList.filter(function(t) {
-        var title = dictionary[currentLang].tools[t.id].title.toLowerCase();
-        var id = t.id.toLowerCase();
-        var cat = t.cat.toLowerCase();
-        return title.includes(s) || id.includes(s) || cat.includes(s);
-    }));
+    clearTimeout(_searchDebounce);
+    _searchDebounce = setTimeout(function() {
+        var s = document.getElementById('toolSearch').value.toLowerCase();
+        renderTools(toolList.filter(function(t) {
+            var title = dictionary[currentLang].tools[t.id].title.toLowerCase();
+            var id = t.id.toLowerCase();
+            var cat = t.cat.toLowerCase();
+            return title.includes(s) || id.includes(s) || cat.includes(s);
+        }));
+    }, 150);
 }
 
 // ─── Service Worker ─────────────────────────────────────────────────────────
