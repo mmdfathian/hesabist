@@ -23,7 +23,8 @@ const SEO_PAGES = [
     './robotsGen.html', './seoGen.html', './utmBuilder.html', './ogPreview.html', './bulkUrl.html',
     './eidi.html', './priceCalc.html', './realstate.html', './counter.html', './checklist.html',
     './calendarTool.html', './dateConv.html', './breathing.html', './worldClock.html', './unitConv.html',
-    './myIp.html', './colorPick.html', './imgConvert.html', './textOnImg.html'
+    './myIp.html', './colorPick.html', './imgConvert.html', './textOnImg.html',
+    './404.html'
 ];
 
 // Add SEO pages to cache list

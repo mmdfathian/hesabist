@@ -11,3 +11,6 @@ Crawl-delay: 10
 # Disallow admin/private paths (if any)
 # Disallow: /admin/
 # Disallow: /private/
+
+# 404 page (noindex, follow - allowed for crawling but not indexing)
+Allow: /404.html
