@@ -1,0 +1,13 @@
+# Robots.txt for hesabist-app.ir
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://hesabist-app.ir/sitemap.xml
+
+# Crawl-delay (optional, be respectful)
+Crawl-delay: 10
+
+# Disallow admin/private paths (if any)
+# Disallow: /admin/
+# Disallow: /private/
