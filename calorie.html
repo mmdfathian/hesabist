@@ -36,16 +36,69 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "کالری‌سوزی",
-  "description": "محاسبه کالری سوزانده شده",
+  "@type": "SoftwareApplication",
+  "name": "محاسبه کالری روزانه (BMR/TDEE)",
+  "alternateName": [
+    "Calorie Calculator",
+    "BMR Calculator"
+  ],
+  "description": "محاسبه باترٍОснов (BMR) و مصرف کل روزانه (TDEE) با هدف لاغری/حفظ/حجم",
   "url": "https://hesabist-app.ir/calorie.html",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "All",
+  "downloadUrl": "https://hesabist-app.ir/hesabist.apk",
+  "installUrl": "https://hesabist-app.ir/",
+  "applicationCategory": "HealthApplication",
+  "applicationSubCategory": "Fitness Calculator",
+  "operatingSystem": "Web Browser",
+  "platform": [
+    "Web",
+    "PWA",
+    "Android"
+  ],
   "offers": {
     "@type": "Offer",
     "price": "0",
-    "priceCurrency": "IRR"
+    "priceCurrency": "IRR",
+    "availability": "https://schema.org/InStock",
+    "eligibleRegion": "IR"
+  },
+  "featureList": [
+    "محاسبه BMR (Mifflin-St Jeor)",
+    "محاسبه TDEE بر اساس سطح فعالیت",
+    "هدف: لاغری، حفظ وزن، افزایش حجم",
+    "توزیع ماکرو (پروتئین، چربی، کربن)",
+    "محاسبه BMI همزمان"
+  ],
+  "screenshot": "https://hesabist-app.ir/og/calorie.png",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "105",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "operatingRequirements": "مرورگر مدرن (Chrome, Firefox, Safari, Edge)",
+  "memoryRequirements": "حداقل ۵۰ مگابایت",
+  "processorRequirements": "هر پردازنده‌ای",
+  "permissions": "دسترسی به اینترنت برای نرخ ارز، ذخیره‌سازی برای PWA",
+  "releaseNotes": "نسخه ۲.۱: اضافه شدن توزیع ماکرو، هدف بدنسازی",
+  "datePublished": "2024-01-15",
+  "dateModified": "2026-08-14",
+  "version": "2.1.0",
+  "author": {
+    "@type": "Organization",
+    "name": "حسابیست",
+    "url": "https://hesabist-app.ir/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MOHIX COMPANY",
+    "url": "https://github.com/mmdfathian/hesabist"
+  },
+  "isAccessibleForFree": true,
+  "license": "https://github.com/mmdfathian/hesabist/blob/main/LICENSE",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hesabist-app.ir/calorie.html"
   }
 }
 </script>

@@ -1,0 +1,81 @@
+# /llms.txt
+# ==========================================
+# HESABIST - Persian Smart Calculator Suite
+# ==========================================
+
+# Site Identity
+Site Name: حسابیست (HESABIST)
+Description: بیش از ۴۰ ابزار محاسباتی رایگان فارسی برای مالی، سلامت، توسعه و عمومی. PWA نصب‌پذیر، کارآمد آفلاین، دو زبانه (فارسی/انگلیسی).
+Keywords: محاسبه آنلاین, ابزار مالی, BMI, وام, نرخ ارز, Base64, QR Code, تقویم شمسی, PWA
+Language: fa-IR, en-US
+Country: IR
+
+# Important Pages (Priority Order)
+## Core Tools (High Traffic)
+- Homepage: https://hesabist-app.ir/
+- Loan Calculator: https://hesabist-app.ir/loan.html
+- BMI Calculator: https://hesabist-app.ir/bmi.html
+- Currency Rates: https://hesabist-app.ir/currency.html
+- Base64 Encoder: https://hesabist-app.ir/base64.html
+- QR Code Generator: https://hesabist-app.ir/qrGen.html
+- Date Converter: https://hesabist-app.ir/dateConv.html
+- VAT Calculator: https://hesabist-app.ir/vat.html
+- Calorie Calculator: https://hesabist-app.ir/calorie.html
+- Password Generator: https://hesabist-app.ir/pass.html
+
+## Categories
+- Finance Tools: https://hesabist-app.ir/?cat=finance
+- Health Tools: https://hesabist-app.ir/?cat=health
+- Developer Tools: https://hesabist-app.ir/?cat=dev
+- General Tools: https://hesabist-app.ir/?cat=general
+- Content Tools: https://hesabist-app.ir/?cat=content
+
+# All 49 SEO Pages (Auto-discovered via sitemap)
+Sitemap: https://hesabist-app.ir/sitemap.xml
+
+# Structured Data
+Schema Types Used:
+- Organization (homepage)
+- SoftwareApplication (each tool page)
+- FAQPage (11 high-traffic tools)
+- BreadcrumbList (all tool pages)
+- WebSite (search action)
+
+# APIs & External Dependencies
+Currency API: https://open.er-api.com/v6/latest/USD (Free, no key required)
+QR Library: qrcode-generator@1.4.4 (CDN: jsdelivr)
+Fonts: Vazirmatn via Google Fonts (display=optional)
+
+# PWA Information
+Manifest: https://hesabist-app.ir/manifest.json
+Service Worker: https://hesabist-app.ir/sw.js
+Offline Support: Full (all assets cached)
+Installable: Yes (meets PWA criteria)
+APK Download: https://hesabist-app.ir/hesabist.apk
+
+# Source Code & Documentation
+Repository: https://github.com/mmdfathian/hesabist
+License: MIT
+Documentation: https://github.com/mmdfathian/hesabist/wiki
+
+# Contact & Social
+GitHub: https://github.com/mmdfathian
+Issues: https://github.com/mmdfathian/hesabist/issues
+Discussions: https://github.com/mmdfathian/hesabist/discussions
+
+# Crawler Directives
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: GeminiBot
+Allow: /
+
+User-agent: *
+Disallow: /404.html
+Crawl-delay: 10
