@@ -12,7 +12,10 @@
 <meta property="og:description" content="محاسبه مالیات ۹ درصد — حسابیست">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hesabist-app.ir/vat.html">
-<meta property="og:image" content="https://hesabist-app.ir/icon-512.svg">
+<meta property="og:image" content="https://hesabist-app.ir/og/vat.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="مالیات ۹٪">
 <meta property="og:locale" content="fa_IR">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="مالیات ۹٪ آنلاین رایگان | حسابیست">
@@ -63,6 +66,64 @@
 .related-bar { padding: 20px; text-align: center; border-top: 1px solid var(--bg); margin-top: 20px; }
 .related-bar a { display: inline-block; padding: 8px 16px; margin: 4px; background: var(--card); border-radius: 20px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--bg); }
 </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "نرخ مالیات بر ارزش افزوده ایران چقدره؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "نرخ استاندارد ۹٪ است (مصوب ۱۳۹۷). برخی کالاها/خدمات معاف یا نرخ متفاوت دارن."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "چطور مالیات ۹٪ رو محاسبه کنیم؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "مبلغ مالیات = قیمت پایه × ۰.۰۹. قیمت نهایی = قیمت پایه × ۱.۰۹. از قیمت نهایی به پایه: قیمت پایه = قیمت نهایی ÷ ۱.۰۹"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "چه چیزهایی معاف از مالیات هستن؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "خدمات پزشکی، آموزش، حمل‌ونقل، صادرات، برخی کالای اساسی، خدمات بانکی/بیمه. لیست کامل در قانون مالیات بر ارزش افزوده."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "خانه",
+      "item": "https://hesabist-app.ir/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "مالی",
+      "item": "https://hesabist-app.ir/?cat=finance"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "مالیات ۹٪",
+      "item": "https://hesabist-app.ir/vat.html"
+    }
+  ]
+}
+  </script>
 </head>
 <body class="theme-blue">
 
@@ -120,12 +181,16 @@
         <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
       </div>
     </div>
-    <div class="related-bar">
-      <p style="opacity:0.5;font-size:0.85rem;margin-bottom:8px;">ابزارهای مرتبط:</p>
-            <a href="/math.html">درصدگیری</a>
-      <a href="/discount.html">تخفیف</a>
-      <a href="/eidi.html">عیدی سالانه</a>
+    
 
+    <div class="related-bar" style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:12px;">ابزارهای مرتبط:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+        <a href="/loan.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">محاسبه وام</a>
+        <a href="/discount.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">محاسبه تخفیف</a>
+        <a href="/profit.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">سود و زیان</a>
+        <a href="/priceCalc.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">محاسبه قیمت</a>
+      </div>
     </div>
   </section>
 

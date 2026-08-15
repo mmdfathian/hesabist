@@ -63,6 +63,32 @@
 .related-bar { padding: 20px; text-align: center; border-top: 1px solid var(--bg); margin-top: 20px; }
 .related-bar a { display: inline-block; padding: 8px 16px; margin: 4px; background: var(--card); border-radius: 20px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--bg); }
 </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "خانه",
+      "item": "https://hesabist-app.ir/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "توسعه",
+      "item": "https://hesabist-app.ir/?cat=dev"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "cssGen",
+      "item": "https://hesabist-app.ir/cssGen.html"
+    }
+  ]
+}
+  </script>
 </head>
 <body class="theme-blue">
 
@@ -120,12 +146,7 @@
         <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
       </div>
     </div>
-    <div class="related-bar">
-      <p style="opacity:0.5;font-size:0.85rem;margin-bottom:8px;">ابزارهای مرتبط:</p>
-            <a href="/robotsGen.html">تولید robots.txt</a>
-      <a href="/seoGen.html">تولید تگ سئو</a>
-
-    </div>
+    
   </section>
 
   <nav class="bottom-bar">

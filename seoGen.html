@@ -12,7 +12,10 @@
 <meta property="og:description" content="تولید متاتگ‌های سئو — حسابیست">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hesabist-app.ir/seoGen.html">
-<meta property="og:image" content="https://hesabist-app.ir/icon-512.svg">
+<meta property="og:image" content="https://hesabist-app.ir/og/seoGen.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="تولید SEO">
 <meta property="og:locale" content="fa_IR">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="تولید تگ سئو آنلاین رایگان | حسابیست">
@@ -63,6 +66,32 @@
 .related-bar { padding: 20px; text-align: center; border-top: 1px solid var(--bg); margin-top: 20px; }
 .related-bar a { display: inline-block; padding: 8px 16px; margin: 4px; background: var(--card); border-radius: 20px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--bg); }
 </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "خانه",
+      "item": "https://hesabist-app.ir/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "محتوا",
+      "item": "https://hesabist-app.ir/?cat=content"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "تولید SEO",
+      "item": "https://hesabist-app.ir/seoGen.html"
+    }
+  ]
+}
+  </script>
 </head>
 <body class="theme-blue">
 
@@ -120,11 +149,15 @@
         <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
       </div>
     </div>
-    <div class="related-bar">
-      <p style="opacity:0.5;font-size:0.85rem;margin-bottom:8px;">ابزارهای مرتبط:</p>
-            <a href="/ogPreview.html">پیش‌نمایش لینک</a>
-      <a href="/utmBuilder.html">ساخت UTM</a>
+    
 
+    <div class="related-bar" style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:12px;">ابزارهای مرتبط:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+        <a href="/ogPreview.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">پیش‌نمایش OG</a>
+        <a href="/qrGen.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">QR Code</a>
+        <a href="/utmBuilder.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">سازماندهی UTM</a>
+      </div>
     </div>
   </section>
 

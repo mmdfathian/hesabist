@@ -12,7 +12,10 @@
 <meta property="og:description" content="محاسبه شاخص توده بدنی — حسابیست">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hesabist-app.ir/bmi.html">
-<meta property="og:image" content="https://hesabist-app.ir/icon-512.svg">
+<meta property="og:image" content="https://hesabist-app.ir/og/bmi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="شاخص BMI">
 <meta property="og:locale" content="fa_IR">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="شاخص BMI آنلاین رایگان | حسابیست">
@@ -63,6 +66,72 @@
 .related-bar { padding: 20px; text-align: center; border-top: 1px solid var(--bg); margin-top: 20px; }
 .related-bar a { display: inline-block; padding: 8px 16px; margin: 4px; background: var(--card); border-radius: 20px; text-decoration: none; color: var(--text); font-size: 0.85rem; border: 1px solid var(--bg); }
 </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "فرمول محاسبه BMI چیست؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "BMI = وزن (کیلوگرم) ÷ [قد (متر)]². مثلاً: ۷۰ ÷ (۱.۷۵)² = ۲۲.۸۶"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "BMI چند باشه طبیعیه؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "۱۸.۵ تا ۲۴.۹ = طبیعی | ۲۵ تا ۲۹.۹ = اضافه وزن | ۳۰ به بالا = چاقی"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "آیا BMI برای ورزشکارها دقیقه؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "نه. ورزشکاران عضله زیاد دارن و عضله سنگینه، پس BMI اونها رو غلط نشون میده. برای آن‌ها محاسبه درصد چربی بهتره."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "شاخص BMI برای کودکان هم معتبره؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "نه. برای کودکان و نوجوانان از نمودار پرسنتیل BMI به‌ویژه جنسیت و سن استفاده میشه، نه محاسبه ساده بزرگسالان."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "خانه",
+      "item": "https://hesabist-app.ir/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "سلامت",
+      "item": "https://hesabist-app.ir/?cat=health"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "شاخص BMI",
+      "item": "https://hesabist-app.ir/bmi.html"
+    }
+  ]
+}
+  </script>
 </head>
 <body class="theme-blue">
 
@@ -120,12 +189,16 @@
         <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
       </div>
     </div>
-    <div class="related-bar">
-      <p style="opacity:0.5;font-size:0.85rem;margin-bottom:8px;">ابزارهای مرتبط:</p>
-            <a href="/ideals.html">وزن ایده‌آل</a>
-      <a href="/water.html">نیاز به آب</a>
-      <a href="/calorie.html">کالری‌سوزی</a>
+    
 
+    <div class="related-bar" style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:12px;">ابزارهای مرتبط:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+        <a href="/calorie.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">کالری‌سوزی</a>
+        <a href="/water.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">نیاز به آب</a>
+        <a href="/ideals.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">وزن ایده‌آل</a>
+        <a href="/age.html" style="display:inline-block;padding:8px 16px;background:var(--card);border-radius:20px;text-decoration:none;color:var(--text);font-size:0.85rem;border:1px solid var(--border);transition:all .2s;">محاسبه سن</a>
+      </div>
     </div>
   </section>
 
