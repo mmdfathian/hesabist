@@ -2,10 +2,16 @@
   "$schema": "https://design-tokens.github.io/format/",
   "color": {
     "primary": {
-      "blue": { "value": "#0984e3", "type": "color", "description": "Primary brand blue" },
-      "purple": { "value": "#6c5ce7", "type": "color", "description": "Primary purple theme" },
-      "orange": { "value": "#e17055", "type": "color", "description": "Primary orange theme" },
-      "green": { "value": "#00b894", "type": "color", "description": "Primary green theme" }
+      "blue": { "value": "#0066cc", "type": "color", "description": "Primary brand blue - WCAG AA on white" },
+      "purple": { "value": "#6c5ce7", "type": "color", "description": "Primary purple theme - WCAG AA on white" },
+      "orange": { "value": "#b34700", "type": "color", "description": "Primary orange theme - WCAG AA on white" },
+      "green": { "value": "#009977", "type": "color", "description": "Primary green theme - WCAG AA on white" }
+    },
+    "primaryDark": {
+      "blue": { "value": "#0984e3", "type": "color", "description": "Primary brand blue for dark mode" },
+      "purple": { "value": "#a29bfe", "type": "color", "description": "Primary purple theme for dark mode" },
+      "orange": { "value": "#fab1a0", "type": "color", "description": "Primary orange theme for dark mode" },
+      "green": { "value": "#55efc4", "type": "color", "description": "Primary green theme for dark mode" }
     },
     "neutral": {
       "0": { "value": "#ffffff", "type": "color" },
@@ -34,10 +40,10 @@
       "shadow": { "value": "rgba(0, 0, 0, 0.08)", "type": "color" },
       "shadow-strong": { "value": "rgba(0, 0, 0, 0.15)", "type": "color" },
       "focus": { "value": "{color.primary.blue}", "type": "color" },
-      "error": { "value": "#ef4444", "type": "color" },
-      "success": { "value": "#22c55e", "type": "color" },
-      "warning": { "value": "#f59e0b", "type": "color" },
-      "info": { "value": "#3b82f6", "type": "color" }
+      "error": { "value": "#dc2626", "type": "color" },
+      "success": { "value": "#16a34a", "type": "color" },
+      "warning": { "value": "#d97706", "type": "color" },
+      "info": { "value": "#2563eb", "type": "color" }
     },
     "dark": {
       "bg": { "value": "{color.neutral.900}", "type": "color" },
@@ -48,7 +54,12 @@
       "text-muted": { "value": "{color.neutral.500}", "type": "color" },
       "border": { "value": "{color.neutral.700}", "type": "color" },
       "shadow": { "value": "rgba(0, 0, 0, 0.3)", "type": "color" },
-      "shadow-strong": { "value": "rgba(0, 0, 0, 0.5)", "type": "color" }
+      "shadow-strong": { "value": "rgba(0, 0, 0, 0.5)", "type": "color" },
+      "focus": { "value": "{color.primaryDark.blue}", "type": "color" },
+      "error": { "value": "#f87171", "type": "color" },
+      "success": { "value": "#4ade80", "type": "color" },
+      "warning": { "value": "#fbbf24", "type": "color" },
+      "info": { "value": "#60a5fa", "type": "color" }
     }
   }
 }
