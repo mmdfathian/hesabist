@@ -1,0 +1,31 @@
+{
+  "$schema": "https://design-tokens.github.io/format/",
+  "components": {
+    "button": {
+      "height": { "sm": "40px", "md": "48px", "lg": "56px" },
+      "padding": { "sm": "0 16px", "md": "0 24px", "lg": "0 32px" },
+      "borderRadius": "{borderRadius.full}",
+      "fontSize": { "sm": "{typography.fontSizes.sm}", "md": "{typography.fontSizes.base}", "lg": "{typography.fontSizes.lg}" },
+      "fontWeight": "{typography.fontWeights.bold}"
+    },
+    "input": {
+      "height": { "sm": "40px", "md": "48px", "lg": "56px" },
+      "padding": { "sm": "0 16px", "md": "0 16px", "lg": "0 20px" },
+      "borderRadius": "{borderRadius.lg}",
+      "fontSize": "{typography.fontSizes.base}",
+      "borderWidth": "2px"
+    },
+    "card": {
+      "padding": "{spacing.6}",
+      "borderRadius": "{borderRadius.2xl}",
+      "shadow": "{shadow.md}",
+      "border": "1px solid {color.semantic.border}"
+    },
+    "modal": {
+      "maxWidth": "400px",
+      "borderRadius": "{borderRadius.2xl} {borderRadius.2xl} 0 0",
+      "padding": "{spacing.8}",
+      "shadow": "{shadow.xl}"
+    }
+  }
+}

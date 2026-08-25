@@ -1,0 +1,21 @@
+{
+  "$schema": "https://design-tokens.github.io/format/",
+  "breakpoints": {
+    "xs": { "value": "320px", "type": "dimension" },
+    "sm": { "value": "360px", "type": "dimension" },
+    "md": { "value": "768px", "type": "dimension" },
+    "lg": { "value": "1024px", "type": "dimension" },
+    "xl": { "value": "1280px", "type": "dimension" },
+    "2xl": { "value": "1536px", "type": "dimension" }
+  },
+  "zIndex": {
+    "hide": { "value": -1, "type": "number" },
+    "base": { "value": 0, "type": "number" },
+    "dropdown": { "value": 100, "type": "number" },
+    "sticky": { "value": 200, "type": "number" },
+    "modal": { "value": 1000, "type": "number" },
+    "popover": { "value": 1100, "type": "number" },
+    "tooltip": { "value": 1200, "type": "number" },
+    "toast": { "value": 1300, "type": "number" }
+  }
+}

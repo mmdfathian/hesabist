@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="google-site-verification" content="NmRYkJhiWxr-2yrRHzvtR-apPVL2kDen5OR4CZsnr8M" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>حسابیست | HESABIST</title>
 <link rel="stylesheet" href="style.css">
 
@@ -144,65 +144,58 @@
     <div class="search-box">
       <input type="text" id="toolSearch" onkeyup="searchTools()" placeholder="جستجو میان ابزارها...">
     </div>
-    <div id="tabs-container" class="tabs-list"></div>
-    <div id="tools-grid" class="tools-grid"></div>
+    <div id="tabs-container" class="tabs-list" role="tablist" aria-label="دسته‌بندی ابزارها"></div>
+    <div id="tools-grid" class="tools-grid" role="list" aria-label="لیست ابزارها"></div>
   </main>
 
-  <section id="tool-view" style="display:none;">
+  <section id="tool-view" style="display:none;" aria-label="محاسبه‌گر ابزار">
     <div class="tool-nav">
-      <button class="back-btn" id="back-btn-label" onclick="showHome()">← بازگشت</button>
+      <button class="back-btn" id="back-btn-label" onclick="showHome()" aria-label="بازگشت به خانه">← بازگشت</button>
       <h2 id="tool-title">عنوان ابزار</h2>
     </div>
     <div class="calc-container">
-      <div class="inputs-group">
-        <input type="text" id="inp1" inputmode="text">
-        <input type="text" id="inp2" style="display:none;">
-        <input type="text" id="inp3" style="display:none;">
-      </div>
-      <button id="btn-calc" class="calc-action-btn">محاسبه نهایی</button>
-      <div class="result-display">
+      <div class="inputs-group" role="form" aria-label="ورودی‌های محاسبه"></div>
+      <button id="btn-calc" class="calc-action-btn" aria-label="انجام محاسبه">محاسبه نهایی</button>
+      <div class="result-display" aria-live="polite" aria-label="نتیجه محاسبه">
         <span id="res-val"></span>
-        <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()">📋 کپی</button>
+        <button id="btn-copy" class="copy-btn" style="display:none;" onclick="copyResult()" aria-label="کپی نتیجه">کپی</button>
       </div>
     </div>
   </section>
 
-  <nav class="bottom-bar">
-    <button id="bar-home" onclick="showHome()">خانه</button>
-    <button id="bar-settings" onclick="toggleSettings()">تنظیمات</button>
-    <button id="lang-btn" onclick="changeLanguage()">English</button>
+  <nav class="bottom-bar" role="navigation" aria-label="نوار ناوبری اصلی">
+    <button id="bar-home" onclick="showHome()" aria-label="خانه" class="active">خانه</button>
+    <button id="bar-settings" onclick="toggleSettings()" aria-label="تنظیمات">تنظیمات</button>
+    <button id="lang-btn" onclick="changeLanguage()" aria-label="تغییر زبان">English</button>
   </nav>
 </div>
 
-<div id="settings-modal" onclick="toggleSettings()">
+<div id="settings-modal" onclick="toggleSettings()" role="dialog" aria-modal="true" aria-labelledby="settings-title">
   <div class="settings-content" onclick="event.stopPropagation()">
     <h3 id="settings-title">تنظیمات ظاهر</h3>
-    <div class="theme-dots">
-      <div class="dot blue" onclick="applyTheme('blue')"></div>
-      <div class="dot purple" onclick="applyTheme('purple')"></div>
-      <div class="dot orange" onclick="applyTheme('orange')"></div>
-      <div class="dot green" onclick="applyTheme('green')"></div>
+    <div class="theme-dots" role="radiogroup" aria-label="انتخاب تم رنگی">
+      <div class="dot blue active" onclick="applyTheme('blue')" role="radio" aria-label="تم آبی" tabindex="0" aria-checked="true"></div>
+      <div class="dot purple" onclick="applyTheme('purple')" role="radio" aria-label="تم بنفش" tabindex="0" aria-checked="false"></div>
+      <div class="dot orange" onclick="applyTheme('orange')" role="radio" aria-label="تم نارنجی" tabindex="0" aria-checked="false"></div>
+      <div class="dot green" onclick="applyTheme('green')" role="radio" aria-label="تم سبز" tabindex="0" aria-checked="false"></div>
     </div>
-    <button class="dark-mode-btn" id="dark-mode-label" onclick="handleDarkMode()">تغییر حالت شب/روز</button>
+    <button class="dark-mode-btn" id="dark-mode-label" onclick="handleDarkMode()" aria-pressed="false">تغییر حالت شب/روز</button>
     <button class="close-modal-btn" id="settings-close-label" onclick="toggleSettings()">تایید</button>
   </div>
 </div>
 
-<script src="script.js?v=3.1"></script>
+<script src="script.js?v=3.2"></script>
 <style>
 .dynamic-select {
-    width: 100%; padding: 18px; border-radius: 15px;
-    border: 2px solid var(--bg); background: var(--bg);
-    color: var(--text); font-size: 1.1rem; margin-bottom: 15px;
-    outline: none; transition: border-color 0.3s;
+    width: 100%; padding: 18px; border-radius: var(--radius-xl);
+    border: 2px solid var(--color-border); background: var(--color-bg);
+    color: var(--color-text-primary); font-size: var(--text-base); font-family: var(--font-primary);
+    margin-bottom: var(--space-4); outline: none; transition: border-color var(--transition-fast);
     appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='2' fill='none'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: left 16px center;
-    cursor: pointer;
 }
-.dynamic-select:focus { border-color: var(--primary); }
-.dark-mode .dynamic-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='2' fill='none'/%3E%3C/svg%3E"); }
-.dynamic-select option { background: var(--bg); color: var(--text); padding: 10px; }
+.dynamic-select:focus { border-color: var(--color-primary); box-shadow: var(--shadow-focus); }
 </style>
 </body>
 </html>

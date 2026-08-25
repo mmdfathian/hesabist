@@ -1,0 +1,25 @@
+{
+  "$schema": "https://design-tokens.github.io/format/",
+  "motion": {
+    "durations": {
+      "instant": { "value": "0ms", "type": "duration" },
+      "fast": { "value": "150ms", "type": "duration" },
+      "normal": { "value": "250ms", "type": "duration" },
+      "slow": { "value": "350ms", "type": "duration" },
+      "slower": { "value": "500ms", "type": "duration" }
+    },
+    "easings": {
+      "linear": { "value": "linear", "type": "easing" },
+      "ease-in": { "value": "cubic-bezier(0.4, 0, 1, 1)", "type": "easing" },
+      "ease-out": { "value": "cubic-bezier(0, 0, 0.2, 1)", "type": "easing" },
+      "ease-in-out": { "value": "cubic-bezier(0.4, 0, 0.2, 1)", "type": "easing" },
+      "bounce": { "value": "cubic-bezier(0.68, -0.55, 0.265, 1.55)", "type": "easing" },
+      "spring": { "value": "cubic-bezier(0.175, 0.885, 0.32, 1.275)", "type": "easing" }
+    },
+    "transitions": {
+      "default": { "value": "{motion.durations.normal} {motion.easings.ease-out}", "type": "transition" },
+      "fast": { "value": "{motion.durations.fast} {motion.easings.ease-out}", "type": "transition" },
+      "slow": { "value": "{motion.durations.slow} {motion.easings.ease-out}", "type": "transition" }
+    }
+  }
+}
